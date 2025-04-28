@@ -6,7 +6,7 @@ from typing import List
 import uuid
 from utils.utc_time import get_current_time_utc
 from bson import Binary, ObjectId
-from parser.pdf_parser import extract
+from parser.pdf_parser import extract, EmptyFileException
 
 
 async def process_zip_extracted_files(extracted_dir: str, batch_id: uuid.UUID, job_id: str, user_id: str, company_id: str):
@@ -43,7 +43,7 @@ async def process_zip_extracted_files(extracted_dir: str, batch_id: uuid.UUID, j
     finally:
         # Cleanup extracted directory
         try:
-            shutil.rmtree(os.path.dirname(extracted_dir))
+            # shutil.rmtree(os.path.dirname(extracted_dir))
             logger.info(f"Successfully cleaned up directory: {extracted_dir}")
         except Exception as e:
             logger.error(f"Failed to cleanup directory {extracted_dir}: {str(e)}", exc_info=True)
@@ -85,14 +85,15 @@ async def _process_file_chunks(
                 invalid_results.append(
                     {
                         **result,
-                        "batch_id": Binary.from_uuid(batch_id),
+                        "batch_id": batch_id,
                         "job_id": ObjectId(job_id),
                         "company_id": ObjectId(company_id),
                         "updated_at": current_time,
                         "created_at": current_time,
                     }
                 )
-            elif isinstance(result, CVParseResponse):
+            # elif isinstance(result, CVParseResponse):
+            elif isinstance(result, list):
                 valid_results.append(result)
 
     logger.info(f"Processed chunk: {len(valid_results)} successful, {error_count} failed")
@@ -180,32 +181,35 @@ async def _process_files(file_path: str, job_name: str, user_id: str):
 
     try:
         text, is_image_pdf = await extract.extract_text(file_path, user_id)
+        logger.info(f"text {text}")
         if file_path.lower().endswith((".docx", ".doc")) and not text:
             # raise exception on failed word files
             raise TextExtractionFailedException("Error parsing")
 
         # Parse the CV
         # for image pdfs the text is already coming with the Json Format
-        parsed_cv = await cv_parser.parse_text(text, user_id) if not is_image_pdf else text
+        # parsed_cv = await cv_parser.parse_text(text, user_id) if not is_image_pdf else text
 
-        if parsed_cv.email:
-            existing_unique_id = await candidates.find_one({"email": parsed_cv.email}, {"_id": 0, "unique_id": 1})
-            if existing_unique_id and existing_unique_id.get("unique_id"):
-                unq_id = existing_unique_id.get("unique_id")
+        # if parsed_cv.email:
+        #     existing_unique_id = await candidates.find_one({"email": parsed_cv.email}, {"_id": 0, "unique_id": 1})
+        #     if existing_unique_id and existing_unique_id.get("unique_id"):
+        #         unq_id = existing_unique_id.get("unique_id")
 
         # Set the unique ID for the candidate
-        parsed_cv.unique_id = unq_id
+        # parsed_cv.unique_id = unq_id
 
         # Upload the CV to S3, set directory link
-        parsed_cv.cv_directory_link = upload_file_to_s3(file_path, job_name, unq_id)
+        # parsed_cv.cv_directory_link = upload_file_to_s3(file_path, job_name, unq_id)s
 
         logger.info(f"Successfully parsed {'PDF' if file_path.endswith('pdf') else 'WORD'} file: {file_path}")
 
-        return parsed_cv
+        # return parsed_cv
+        return text
 
     except Exception as e:
         if isinstance(e, EmptyFileException):
             logger.error(f"{file_path}, contains no text. Moving to errors collection. \n{str(e)}", exc_info=True)
         else:
             logger.error(f"Error extracting text from {file_path}: {str(e)}, moving to errors collection", exc_info=True)
-        return {"error": str(e), "cv_directory_link": upload_file_to_s3(file_path, job_name, unq_id)}
+        # return {"error": str(e), "cv_directory_link": upload_file_to_s3(file_path, job_name, unq_id)}
+        return {"error": str(e), "cv_directory_link":"link"}

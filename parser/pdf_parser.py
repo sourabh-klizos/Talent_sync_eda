@@ -59,7 +59,7 @@ class _ExtractTextFromFile:
 
     def __init__(self):
         # self.pdftotext_path = pdftotext_exe_path()
-        self.pdftotext_path = r"C:\Program Files\xpdf-tools\bin64\pdftotext.exe",
+        self.pdftotext_path = r"C:\Program Files\xpdf-tools\bin64\pdftotext.exe"
 
     async def _convert_pdf_to_text(self, pdf_file_path: str, output_text_file_name: str) -> str:
         """Convert PDF file to text using pdftotext utility"""
@@ -113,6 +113,8 @@ class _ExtractTextFromFile:
             if file_path.endswith(".pdf"):
                 with tempfile.NamedTemporaryFile(suffix=".txt", delete=False) as txt_temp:
                     result = await self._convert_pdf_to_text(file_path, txt_temp.name)
+
+                    logger.debug(f"txt_temp type: {type(txt_temp)} - txt_temp.name: {txt_temp.name}")
 
                     if result.startswith("error:"):
                         raise PDFConversionFailedException(f"PDF conversion failed: {result}")

@@ -6,6 +6,9 @@ from typing import Dict
 from redis_conf import get_redis_client
 
 from settings import logger
+from utils.utils import process_zip_extracted_files
+
+
 
 REDIS_URI = "redis://localhost"
 STREAM_NAME = "process_pdfs"
@@ -26,14 +29,28 @@ async def ensure_group(redis_client):
             raise
 
 
-async def process_message(message_id: str, data: Dict):
-    #This will receive list of path dir
+async def process_message(message_id: str, data: str):
+    # Log the received message data
     logger.info(f"Processing message {message_id} -> {data}")
-    # Simulate async work (like PDF parsing)
-    await asyncio.sleep(10)
-
-    #this function will receive multipe paths of pdf extraxt dir 
-    # background_processing()
+    
+    # Check if the data is a string (JSON format) and load it into a dictionary
+    # if isinstance(data, str):
+    #     data = json.loads(data)
+    
+    # Loop through the extracted directory paths
+    for extracted_dir in data.get("message").get("extracted_dir"):
+        logger.info(f"Processing extracted directory: {extracted_dir}")
+        
+        # Process the extracted files asynchronously
+        await process_zip_extracted_files(
+            extracted_dir,
+            data.get("batch_id"),
+            data.get("job_id"),
+            data.get("company_id"),
+            data.get("user_id")
+        )
+    
+    # Log completion of message processing
     logger.info(f"Done processing {message_id}")
 
 
@@ -48,7 +65,7 @@ async def consume_new_messages(redis_client, consumer_name):
                 block=READ_BLOCK_MS
             )
             if not response:
-                logger.info("No response")
+                # logger.info("No response")
                 continue
 
             for stream, messages in response:
@@ -89,7 +106,8 @@ async def reclaim_stuck_messages(redis_client):
 
                 try:
                     # data = {k.decode(): v.decode() for k, v in message.items()}
-                    data = {k : v for k, v in message.items()}
+                
+                    data = {k : json.loads(v) for k, v in message.items()}
                 except json.JSONDecodeError:
                     logger.error(f"Error decoding JSON for message {message_id}")
                     continue
