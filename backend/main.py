@@ -34,7 +34,7 @@ async def upload_pdf(
         processed_files: List = list()
         file_count: int = 0
         for file in files:
-            logger.info(f"Processing file: {file.filename},  {file}")
+            # logger.info(f"Processing file: {file.filename},  {file}")
             if file.content_type not in [
                 "application/zip",
                 "application/x-zip-compressed",

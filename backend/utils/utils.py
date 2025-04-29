@@ -32,18 +32,23 @@ async def process_zip_extracted_files(extracted_dir: str, batch_id: uuid.UUID, j
             async with semaphore:
                 await _process_file_chunks(chunk, extracted_dir, batch_id, job_id, job_data, user_id, company_id)
 
+        # chunk_tasks = [asyncio.create_task(process_with_semaphore(chunk)) for chunk in chunks]
         chunk_tasks = [process_with_semaphore(chunk) for chunk in chunks]
         await asyncio.gather(*chunk_tasks)
 
         logger.info("Completed processing all chunks")
 
+
         # Process qualified candidates and prepare email notifications
+
+        await asyncio.sleep(2)
         # asyncio.create_task(process_candidates_and_vectorize(batch_id, job_id, company_id, user_id))
 
     finally:
         # Cleanup extracted directory
         try:
             # shutil.rmtree(os.path.dirname(extracted_dir))
+            shutil.rmtree(extracted_dir)
             logger.info(f"Successfully cleaned up directory: {extracted_dir}")
         except Exception as e:
             logger.error(f"Failed to cleanup directory {extracted_dir}: {str(e)}", exc_info=True)
@@ -97,6 +102,8 @@ async def _process_file_chunks(
                 valid_results.append(result)
 
     logger.info(f"Processed chunk: {len(valid_results)} successful, {error_count} failed")
+
+    await asyncio.sleep(2)
 
     # Insert valid results into MongoDB
     # if valid_results:
@@ -185,6 +192,8 @@ async def _process_files(file_path: str, job_name: str, user_id: str):
         if file_path.lower().endswith((".docx", ".doc")) and not text:
             # raise exception on failed word files
             raise TextExtractionFailedException("Error parsing")
+        
+        await asyncio.sleep(2)
 
         # Parse the CV
         # for image pdfs the text is already coming with the Json Format
