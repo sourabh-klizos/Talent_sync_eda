@@ -2,25 +2,11 @@ import asyncio
 import os.path
 import subprocess
 import tempfile
-
-
-# from app.core.docx_to_text import DocxExtractor
-# from app.core.imagepdf_to_text import ImageGrabber
-
-# from app.logger import logger
-# from app.misc import Toolkit
-# from app.service.ai import imagetranslator
-# from app.utils import pdftotext_exe_path
 from openai import APIConnectionError, APIError, APITimeoutError, RateLimitError
-
-
 from parser.docx_to_text import DocxExtractor
 from parser.imagepdf_to_text import ImageGrabber
 from parser.misc import Toolkit
-
-
 from backend.settings import logger
-
 
 
 

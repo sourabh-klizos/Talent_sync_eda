@@ -8,6 +8,12 @@ from utils.utc_time import get_current_time_utc
 from bson import Binary, ObjectId
 from parser.pdf_parser import extract, EmptyFileException
 
+import os , sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from backend.db import extracted_texts
+
 
 async def process_zip_extracted_files(extracted_dir: str, batch_id: uuid.UUID, job_id: str, user_id: str, company_id: str):
     """Process all PDF files in the extracted directory using worker pool"""
@@ -188,6 +194,18 @@ async def _process_files(file_path: str, job_name: str, user_id: str):
 
     try:
         text, is_image_pdf = await extract.extract_text(file_path, user_id)
+
+        if text:
+            extracted_texts.insert_one(
+                {
+                    "job_name": job_name,
+                    "user_id":user_id,
+                    "parse_text" : text if text else ""
+
+                }
+            )
+        
+
         logger.info(f"text extracted ... for  {file_path}")
         if file_path.lower().endswith((".docx", ".doc")) and not text:
             # raise exception on failed word files

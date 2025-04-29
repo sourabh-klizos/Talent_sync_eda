@@ -56,6 +56,4 @@ async def upload_multiple_with_bg_task(n: int):
 if __name__ == "__main__":
     # asyncio.run(upload_zip())
     # asyncio.run(upload_multiple(30))
-    asyncio.run(upload_multiple_with_bg_task(5))
-
-
+    asyncio.run(upload_multiple_with_bg_task(20))

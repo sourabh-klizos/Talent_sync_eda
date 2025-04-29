@@ -7,6 +7,7 @@ DATABASE_NAME = "talentsync_"
 BATCHES_COLLECTION = "batches"
 CANDIDATES_COLLECTION = "candidates"
 JOB_COLLECTION = "jobs"
+EXTRACTED_TEXT_COLLECTION = "extracted_texts"
 
 # Create an async MongoDB client
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URI)
@@ -22,3 +23,4 @@ db = client[DATABASE_NAME]
 batches = db[BATCHES_COLLECTION]
 candidates = db[CANDIDATES_COLLECTION]
 jobs = db[JOB_COLLECTION]
+extracted_texts = db[EXTRACTED_TEXT_COLLECTION]

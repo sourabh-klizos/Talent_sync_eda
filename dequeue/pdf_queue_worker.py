@@ -18,7 +18,7 @@ from utils.utils import process_zip_extracted_files
 REDIS_URI = "redis://localhost"
 STREAM_NAME = "process_pdfs"
 GROUP_NAME = "tread_group"
-MIN_IDLE_TIME_MS = 60 * 1_000 * 2  # Reclaim jobs stuck for 120 seconds
+MIN_IDLE_TIME_MS = 60 * 1_000 * 3  # Reclaim jobs stuck for 180 seconds
 READ_BLOCK_MS = 5000  # Block 5 seconds for new messages
 READ_COUNT = 10
 
@@ -46,10 +46,10 @@ async def process_message(message_id: str, data: str):
         # Process the extracted files asynchronously
         await process_zip_extracted_files(
             extracted_dir,
-            data.get("batch_id"),
-            data.get("job_id"),
-            data.get("company_id"),
-            data.get("user_id"),
+            data.get("message").get("batch_id"),
+            data.get("message").get("job_id"),
+            data.get("message").get("company_id"),
+            data.get("message").get("user_id"),
         )
 
     # Log completion of message processing
