@@ -14,19 +14,10 @@ from db import batches, candidates, jobs
 
 app = FastAPI()
 
-async def enqueue(queue_data: dict):
-    redis_client = await get_redis_client()
-    
-    await redis_client.xadd(
-        STREAM_NAME,
-        # {"message": json.dumps(queue_data).encode()}
-        {"message": json.dumps(queue_data).encode()}
-    )
 
 
-# redis_client = redis.from_url("redis://localhost", decode_responses=True)
 
-STREAM_NAME = "process_pdfs"
+
 
 
 @app.post("/upload")
@@ -73,7 +64,7 @@ async def upload_pdf(
                 f"Extracted {curr_file_count} files from {file.filename}, Batch ID: "
             )
 
-        # logic
+ 
         data = {
             "job_id": job_id,
             "batch_name": batch_name,
@@ -99,22 +90,11 @@ async def upload_pdf(
             "company_id": details.get("company_id", generate_random_id()),
         }
 
-        # await redis_client.xadd(STREAM_NAME, {"message": queue_data.encode()})
-        
-        # redis_client = await get_redis_client()
-
-
-        # await redis_client.xadd(
-        #     STREAM_NAME, {"message": json.dumps(queue_data).encode()}
-        # )
+ 
 
         await enqueue(queue_data)
 
-        # return {"message": f"{len(files)} files queued for processing."}
-        # return {
-        # "message": f"{file_count} files queued for processing. You will receive an email when the process is done.",
-        # "batch_id": data.get("batch_id")
-        # }
+
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
@@ -132,3 +112,15 @@ async def upload_pdf(
 def generate_random_id() -> str:
     """Generates a random ID using UUID and a random number"""
     return str(uuid4())  # Generates a random UUID
+
+
+
+async def enqueue(queue_data: dict):
+    STREAM_NAME = "process_pdfs"
+    redis_client = await get_redis_client()
+    
+    await redis_client.xadd(
+        STREAM_NAME,
+        # {"message": json.dumps(queue_data).encode()}
+        {"message": json.dumps(queue_data).encode()}
+    )
