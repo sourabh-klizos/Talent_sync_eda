@@ -1,4 +1,4 @@
-from settings import logger
+from backend.settings import logger
 import asyncio
 import os
 import shutil
@@ -188,7 +188,7 @@ async def _process_files(file_path: str, job_name: str, user_id: str):
 
     try:
         text, is_image_pdf = await extract.extract_text(file_path, user_id)
-        logger.info(f"text {text}")
+        logger.info(f"text extracted ... for  {file_path}")
         if file_path.lower().endswith((".docx", ".doc")) and not text:
             # raise exception on failed word files
             raise TextExtractionFailedException("Error parsing")

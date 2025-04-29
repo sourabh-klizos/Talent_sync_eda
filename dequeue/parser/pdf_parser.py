@@ -19,7 +19,7 @@ from parser.imagepdf_to_text import ImageGrabber
 from parser.misc import Toolkit
 
 
-from settings import logger
+from backend.settings import logger
 
 
 

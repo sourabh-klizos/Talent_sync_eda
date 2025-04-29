@@ -9,9 +9,19 @@ from redis_conf import get_redis_client
 from settings import logger
 from uuid import uuid4
 from utils.utc_time import get_current_time_utc
+
 from db import batches, candidates, jobs
 
 app = FastAPI()
+
+async def enqueue(queue_data: dict):
+    redis_client = await get_redis_client()
+    
+    await redis_client.xadd(
+        STREAM_NAME,
+        # {"message": json.dumps(queue_data).encode()}
+        {"message": json.dumps(queue_data).encode()}
+    )
 
 
 # redis_client = redis.from_url("redis://localhost", decode_responses=True)
@@ -90,10 +100,15 @@ async def upload_pdf(
         }
 
         # await redis_client.xadd(STREAM_NAME, {"message": queue_data.encode()})
-        redis_client = await get_redis_client()
-        await redis_client.xadd(
-            STREAM_NAME, {"message": json.dumps(queue_data).encode()}
-        )
+        
+        # redis_client = await get_redis_client()
+
+
+        # await redis_client.xadd(
+        #     STREAM_NAME, {"message": json.dumps(queue_data).encode()}
+        # )
+
+        await enqueue(queue_data)
 
         # return {"message": f"{len(files)} files queued for processing."}
         # return {

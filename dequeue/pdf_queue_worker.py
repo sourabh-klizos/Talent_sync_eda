@@ -3,11 +3,16 @@ import redis.asyncio as redis
 import json
 import logging
 from typing import Dict
-from redis_conf import get_redis_client
+import sys, os
 
-from settings import logger
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from backend.redis_conf import get_redis_client
+
+# from ..backend.redis_conf import get_redis_client
+
+from backend.settings import logger
+
 from utils.utils import process_zip_extracted_files
-
 
 
 REDIS_URI = "redis://localhost"
@@ -20,7 +25,9 @@ READ_COUNT = 10
 
 async def ensure_group(redis_client):
     try:
-        await redis_client.xgroup_create(STREAM_NAME, GROUP_NAME, id='0-0', mkstream=True)
+        await redis_client.xgroup_create(
+            STREAM_NAME, GROUP_NAME, id="0-0", mkstream=True
+        )
         logger.info("Consumer group created")
     except Exception as e:
         if "BUSYGROUP" in str(e):
@@ -30,26 +37,21 @@ async def ensure_group(redis_client):
 
 
 async def process_message(message_id: str, data: str):
-    # Log the received message data
+
     logger.info(f"Processing message {message_id} -> {data}")
-    
-    # Check if the data is a string (JSON format) and load it into a dictionary
-    # if isinstance(data, str):
-    #     data = json.loads(data)
-    
-    # Loop through the extracted directory paths
+
     for extracted_dir in data.get("message").get("extracted_dir"):
         logger.info(f"Processing extracted directory: {extracted_dir}")
-        
+
         # Process the extracted files asynchronously
         await process_zip_extracted_files(
             extracted_dir,
             data.get("batch_id"),
             data.get("job_id"),
             data.get("company_id"),
-            data.get("user_id")
+            data.get("user_id"),
         )
-    
+
     # Log completion of message processing
     logger.info(f"Done processing {message_id}")
 
@@ -60,28 +62,26 @@ async def consume_new_messages(redis_client, consumer_name):
             response = await redis_client.xreadgroup(
                 groupname=GROUP_NAME,
                 consumername=consumer_name,
-                streams={STREAM_NAME: '>'},
+                streams={STREAM_NAME: ">"},
                 count=READ_COUNT,
-                block=READ_BLOCK_MS
+                block=READ_BLOCK_MS,
             )
             if not response:
-                # logger.info("No response")
                 continue
 
             for stream, messages in response:
-                # print(stream, " ----" *10)
-                # print(messages, " ----" *10)
                 for message_id, message in messages:
                     try:
-                        # data = {k.decode(): json.loads(v) for k, v in message.items()}
-                        data = {k : json.loads(v) for k, v in message.items()}
+                        data = {k: json.loads(v) for k, v in message.items()}
                         logger.info(f"Response: {data}")
 
                         await process_message(message_id, data)
                         await redis_client.xack(STREAM_NAME, GROUP_NAME, message_id)
 
                     except json.JSONDecodeError as e:
-                        logger.error(f"Error decoding JSON for message {message_id}: {e}")
+                        logger.error(
+                            f"Error decoding JSON for message {message_id}: {e}"
+                        )
 
                     except Exception as e:
                         logger.error(f"Unexpected error for message {message_id}: {e}")
@@ -93,8 +93,12 @@ async def reclaim_stuck_messages(redis_client):
     while True:
         try:
             messages = await redis_client.xautoclaim(
-                STREAM_NAME, GROUP_NAME, "consumer-1", min_idle_time=MIN_IDLE_TIME_MS,
-                start_id="0-0", count=READ_COUNT
+                STREAM_NAME,
+                GROUP_NAME,
+                "consumer-1",
+                min_idle_time=MIN_IDLE_TIME_MS,
+                start_id="0-0",
+                count=READ_COUNT,
             )
 
             if not messages or not messages[1]:
@@ -102,12 +106,12 @@ async def reclaim_stuck_messages(redis_client):
                 continue
 
             for message_id, message in messages[1]:
-                logger.warning(f"Reclaiming and reprocessing stuck message: {message_id} , {message}")
+                logger.warning(
+                    f"Reclaiming and reprocessing stuck message: {message_id} , {message}"
+                )
 
                 try:
-                    # data = {k.decode(): v.decode() for k, v in message.items()}
-                
-                    data = {k : json.loads(v) for k, v in message.items()}
+                    data = {k: json.loads(v) for k, v in message.items()}
                 except json.JSONDecodeError:
                     logger.error(f"Error decoding JSON for message {message_id}")
                     continue
@@ -117,12 +121,11 @@ async def reclaim_stuck_messages(redis_client):
 
         except Exception as e:
             logger.exception(f"Error while reclaiming messages: {e}")
-        
+
         await asyncio.sleep(5)
 
 
 async def main():
-    # redis_client = redis.from_url(REDIS_URI, decode_responses=True)
     redis_client = await get_redis_client()
     await ensure_group(redis_client)
 
@@ -131,8 +134,11 @@ async def main():
 
     # Start multiple consumers concurrently
     await asyncio.gather(
-        *(consume_new_messages(redis_client, consumer_name) for consumer_name in consumer_names),
-        reclaim_stuck_messages(redis_client)  # Reclaim stuck messages
+        *(
+            consume_new_messages(redis_client, consumer_name)
+            for consumer_name in consumer_names
+        ),
+        reclaim_stuck_messages(redis_client),  # Reclaim stuck messages
     )
 
 

@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 import pymupdf
 import pytesseract
-from settings import logger
+from backend.settings import logger
 # from app.misc import Toolkit
 from parser.misc import Toolkit
 from langdetect import DetectorFactory, detect

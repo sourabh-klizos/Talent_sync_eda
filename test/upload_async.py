@@ -49,13 +49,13 @@ async def upload_multiple_with_bg_task(n: int):
     # Wait for all background uploads to finish
     # await asyncio.gather(*tasks)
 
-    await asyncio.sleep(60)
+    await asyncio.sleep(10)
 
 
 
 if __name__ == "__main__":
     # asyncio.run(upload_zip())
     # asyncio.run(upload_multiple(30))
-    asyncio.run(upload_multiple_with_bg_task(100))
+    asyncio.run(upload_multiple_with_bg_task(5))
 
 
