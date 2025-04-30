@@ -11,7 +11,7 @@ async def upload_zip():
         'batch_name': 'python developer 2023',
     }
 
-    # zip_path = "C:\Users\Sourabh Kumar Das\Downloads\sample-local-pdf (2).zip"
+    # zip_path = r"C:\Users\Sourabh Kumar Das\Downloads\sample-local-pdf (2).zip"
     zip_path = "C:\\Users\\Sourabh Kumar Das\\Downloads\\sample-local-pdf (2).zip"
 
     # Prepare the file to send as multipart

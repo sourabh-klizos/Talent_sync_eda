@@ -10,17 +10,26 @@ from parser.pdf_parser import extract, EmptyFileException
 
 import os , sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from backend.redis_conf import get_redis_client
+
+
 
 from backend.db import extracted_texts
 
 
-async def process_zip_extracted_files(extracted_dir: str, batch_id: uuid.UUID, job_id: str, user_id: str, company_id: str):
+
+
+async def process_zip_extracted_files(extracted_dir: str, batch_id: uuid.UUID, job_id: str, user_id: str, company_id: str, stream_details : dict):
     """Process all PDF files in the extracted directory using worker pool"""
     logger.info(f"Starting to process files from extracted directory: {extracted_dir}")
     try:
         files = [f for f in os.listdir(extracted_dir) if f.endswith((".pdf", ".docx"))]
         logger.info(f"Found {len(files)} CV files to process")
+
+        logger.info(f"files {files}")
+        
 
         # Split files into non-overlapping chunks of size 4
         chunks = [files[i : i + 4] for i in range(0, len(files), 4)]
@@ -47,7 +56,9 @@ async def process_zip_extracted_files(extracted_dir: str, batch_id: uuid.UUID, j
 
         # Process qualified candidates and prepare email notifications
 
+        logger.info(f"Starting processing for batch {batch_id}")
         await asyncio.sleep(2)
+        logger.info(f"Successfully processed batch {batch_id}")
         # asyncio.create_task(process_candidates_and_vectorize(batch_id, job_id, company_id, user_id))
 
     finally:
@@ -56,6 +67,26 @@ async def process_zip_extracted_files(extracted_dir: str, batch_id: uuid.UUID, j
             # shutil.rmtree(os.path.dirname(extracted_dir))
             shutil.rmtree(extracted_dir)
             logger.info(f"Successfully cleaned up directory: {extracted_dir}")
+
+   
+            # from utils.utils import get_redis_client
+
+            stream_message_id = stream_details.get("stream_message_id")
+            group_name = stream_details.get("group_name")
+            stream_name = stream_details.get("stream_name")
+
+            redis_client = await get_redis_client()
+            
+            await redis_client.xack(stream_name, group_name, stream_message_id)
+            
+            await redis_client.xdel(stream_name, stream_message_id)
+
+            logger.info(f"Deleted message {stream_message_id} from stream '{stream_name}'")
+
+
+            logger.info(f"Successfully cleaned up directory: {extracted_dir}")
+            # await redis_client.xack(STREAM_NAME, GROUP_NAME, message_id)
+
         except Exception as e:
             logger.error(f"Failed to cleanup directory {extracted_dir}: {str(e)}", exc_info=True)
 

@@ -6,9 +6,11 @@ import io
 import zipfile
 import json
 from redis_conf import get_redis_client
+# from backend.redis_conf import get_redis_client
 from settings import logger
 from uuid import uuid4
 from utils.utc_time import get_current_time_utc
+from bson import ObjectId
 
 from db import batches, candidates, jobs
 
@@ -71,10 +73,10 @@ async def upload_pdf(
             "extracted_dir": processed_files,
             "upload_count": file_count,
             "company_id": "123_company",
-            "batch_id": generate_random_id(),
+            "batch_id": await generate_random_id(),
             "batch_name": batch_name,
             "upload_count": file_count,
-            "job_id": generate_random_id(),
+            "job_id": await generate_obj_id(),
             "created_at": get_current_time_utc(),
             "updated_at": get_current_time_utc(),
         }
@@ -86,10 +88,11 @@ async def upload_pdf(
         queue_data = {
             "extracted_dir": processed_files,
             "batch_id": data.get("batch_id"),
-            "user_id": details.get("user_id", generate_random_id()),
-            "company_id": details.get("company_id", generate_random_id()),
+            "user_id": details.get("user_id", await generate_obj_id()),
+            "company_id": details.get("company_id", await generate_obj_id()),
         }
 
+        print(processed_files)
  
 
         await enqueue(queue_data)
@@ -105,15 +108,16 @@ async def upload_pdf(
     except Exception as e:
         return HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Something went wrong!",
+            detail=f"Something went wrong! {e}",
         )
 
 
-def generate_random_id() -> str:
+async def generate_random_id() -> str:
     """Generates a random ID using UUID and a random number"""
     return str(uuid4())  # Generates a random UUID
 
-
+async def generate_obj_id():
+    return str(ObjectId()) 
 
 async def enqueue(queue_data: dict):
     STREAM_NAME = "process_pdfs"

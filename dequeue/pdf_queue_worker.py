@@ -7,10 +7,10 @@ import sys, os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from backend.redis_conf import get_redis_client
+from backend.settings import logger
 
 # from ..backend.redis_conf import get_redis_client
 
-from backend.settings import logger
 
 from utils.utils import process_zip_extracted_files
 
@@ -36,9 +36,9 @@ async def ensure_group(redis_client):
             raise
 
 
-async def process_message(message_id: str, data: str):
+async def process_message(stream_message_id: str, data: str, group_name:str , consumer_name:str):
 
-    logger.info(f"Processing message {message_id} -> {data}")
+    logger.info(f"Processing message {stream_message_id} -> {data}")
 
     for extracted_dir in data.get("message").get("extracted_dir"):
         logger.info(f"Processing extracted directory: {extracted_dir}")
@@ -50,10 +50,16 @@ async def process_message(message_id: str, data: str):
             data.get("message").get("job_id"),
             data.get("message").get("company_id"),
             data.get("message").get("user_id"),
+            {
+                "stream_message_id": stream_message_id,
+                "group_name" : group_name, 
+                "stream_name" :STREAM_NAME
+            }
+ 
         )
 
     # Log completion of message processing
-    logger.info(f"Done processing {message_id}")
+    logger.info(f"Done processing {stream_message_id}")
 
 
 async def consume_new_messages(redis_client, consumer_name):
@@ -75,8 +81,8 @@ async def consume_new_messages(redis_client, consumer_name):
                         data = {k: json.loads(v) for k, v in message.items()}
                         logger.info(f"Response: {data}")
 
-                        await process_message(message_id, data)
-                        await redis_client.xack(STREAM_NAME, GROUP_NAME, message_id)
+                        await process_message(message_id, data, GROUP_NAME ,consumer_name )
+                        # await redis_client.xack(STREAM_NAME, GROUP_NAME, message_id)
 
                     except json.JSONDecodeError as e:
                         logger.error(

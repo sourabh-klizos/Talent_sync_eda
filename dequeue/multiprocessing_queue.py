@@ -101,7 +101,7 @@ async def run_consumer(consumer_name):
     await ensure_group(redis_client)
     await asyncio.gather(
         consume_new_messages(redis_client, consumer_name),
-        reclaim_stuck_messages(redis_client, consumer_name)
+        # reclaim_stuck_messages(redis_client, consumer_name)
     )
 
 def start_consumer_process(consumer_name):
@@ -109,7 +109,7 @@ def start_consumer_process(consumer_name):
 
 if __name__ == "__main__":
     # consumer_names = ["consumer-1", "consumer-2", "consumer-3"]
-    consumer_names = ["consumer-1", "consumer-2"]
+    consumer_names = ["consumer-10", "consumer-20"]
     processes = []
 
     for name in consumer_names:
