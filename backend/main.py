@@ -6,6 +6,7 @@ import io
 import zipfile
 import json
 from redis_conf import get_redis_client
+
 # from backend.redis_conf import get_redis_client
 from settings import logger
 from uuid import uuid4
@@ -15,11 +16,6 @@ from bson import ObjectId
 from db import batches, candidates, jobs
 
 app = FastAPI()
-
-
-
-
-
 
 
 @app.post("/upload")
@@ -66,7 +62,6 @@ async def upload_pdf(
                 f"Extracted {curr_file_count} files from {file.filename}, Batch ID: "
             )
 
- 
         data = {
             "job_id": job_id,
             "batch_name": batch_name,
@@ -93,10 +88,8 @@ async def upload_pdf(
         }
 
         print(processed_files)
- 
 
         await enqueue(queue_data)
-
 
         return JSONResponse(
             status_code=status.HTTP_200_OK,
@@ -116,15 +109,17 @@ async def generate_random_id() -> str:
     """Generates a random ID using UUID and a random number"""
     return str(uuid4())  # Generates a random UUID
 
+
 async def generate_obj_id():
-    return str(ObjectId()) 
+    return str(ObjectId())
+
 
 async def enqueue(queue_data: dict):
     STREAM_NAME = "process_pdfs"
     redis_client = await get_redis_client()
-    
+
     await redis_client.xadd(
         STREAM_NAME,
         # {"message": json.dumps(queue_data).encode()}
-        {"message": json.dumps(queue_data).encode()}
+        {"message": json.dumps(queue_data).encode()},
     )

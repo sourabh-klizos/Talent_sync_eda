@@ -38,7 +38,9 @@ class Toolkit:
         first_char = secrets.choice(string.ascii_uppercase)
 
         # Generate remaining random characters
-        remaining_chars = "".join(secrets.choice(alphabet) for _ in range(length1 + length2 - 1))
+        remaining_chars = "".join(
+            secrets.choice(alphabet) for _ in range(length1 + length2 - 1)
+        )
         generated_string = list(first_char + remaining_chars)
 
         # Use a short, unique timestamp in milliseconds (hex encoded)
@@ -67,7 +69,9 @@ class Toolkit:
             return None
 
     @classmethod
-    def ocr_pdf(cls, pdf_path: str) -> Literal["text_pdf", "scanned_pdf", "corrupt_pdf"]:
+    def ocr_pdf(
+        cls, pdf_path: str
+    ) -> Literal["text_pdf", "scanned_pdf", "corrupt_pdf"]:
         """
         Runs OCR on a PDF using ocrmypdf.
 
@@ -76,11 +80,15 @@ class Toolkit:
             - "scanned_pdf": If OCR was successfully performed.
             - "corrupt_pdf": If PDF is corrupt or another error occurs.
         """
-        pdf_out_dir = os.path.join(tempfile.gettempdir(), f"{cls.generate_concatenated_random_strings()}.pdf")
+        pdf_out_dir = os.path.join(
+            tempfile.gettempdir(), f"{cls.generate_concatenated_random_strings()}.pdf"
+        )
         cmd = ["ocrmypdf", pdf_path, pdf_out_dir]
 
         try:
-            subprocess.run(cmd, capture_output=True, text=True, check=True)  # Automatically raise CalledProcessError on non-zero exit
+            subprocess.run(
+                cmd, capture_output=True, text=True, check=True
+            )  # Automatically raise CalledProcessError on non-zero exit
             return "scanned_pdf"
 
         except subprocess.CalledProcessError as e:

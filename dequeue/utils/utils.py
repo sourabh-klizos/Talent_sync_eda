@@ -2,26 +2,40 @@ from backend.settings import logger
 import asyncio
 import os
 import shutil
-from typing import List 
+from typing import List
 import uuid
 from utils.utc_time import get_current_time_utc
 from bson import Binary, ObjectId
 from parser.pdf_parser import extract, EmptyFileException
 
-import os , sys
+import os, sys
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from backend.redis_conf import get_redis_client
 
 
-
 from backend.db import extracted_texts
 
 
+async def delete_from_stream(stream_details: dict) -> None:
+    stream_message_id = stream_details.get("stream_message_id")
+    group_name = stream_details.get("group_name")
+    stream_name = stream_details.get("stream_name")
+    redis_client = await get_redis_client()
+    await redis_client.xack(stream_name, group_name, stream_message_id)
+    await redis_client.xdel(stream_name, stream_message_id)
+    logger.info(f"Deleted message {stream_message_id} from stream '{stream_name}'")
 
 
-async def process_zip_extracted_files(extracted_dir: str, batch_id: uuid.UUID, job_id: str, user_id: str, company_id: str, stream_details : dict):
+async def process_zip_extracted_files(
+    extracted_dir: str,
+    batch_id: uuid.UUID,
+    job_id: str,
+    user_id: str,
+    company_id: str,
+    stream_details: dict,
+):
     """Process all PDF files in the extracted directory using worker pool"""
     logger.info(f"Starting to process files from extracted directory: {extracted_dir}")
     try:
@@ -29,7 +43,6 @@ async def process_zip_extracted_files(extracted_dir: str, batch_id: uuid.UUID, j
         logger.info(f"Found {len(files)} CV files to process")
 
         logger.info(f"files {files}")
-        
 
         # Split files into non-overlapping chunks of size 4
         chunks = [files[i : i + 4] for i in range(0, len(files), 4)]
@@ -37,7 +50,7 @@ async def process_zip_extracted_files(extracted_dir: str, batch_id: uuid.UUID, j
 
         # Fetch job data once
         # job_data = redis.get_json_(f"job:{job_id}")
-        job_data: dict = dict() 
+        job_data: dict = dict()
 
         # Process chunks with 8 concurrent workers
         semaphore = asyncio.Semaphore(8)
@@ -45,14 +58,21 @@ async def process_zip_extracted_files(extracted_dir: str, batch_id: uuid.UUID, j
         async def process_with_semaphore(chunk):
             nonlocal batch_id, job_id, job_data
             async with semaphore:
-                await _process_file_chunks(chunk, extracted_dir, batch_id, job_id, job_data, user_id, company_id)
+                await _process_file_chunks(
+                    chunk,
+                    extracted_dir,
+                    batch_id,
+                    job_id,
+                    job_data,
+                    user_id,
+                    company_id,
+                )
 
         # chunk_tasks = [asyncio.create_task(process_with_semaphore(chunk)) for chunk in chunks]
         chunk_tasks = [process_with_semaphore(chunk) for chunk in chunks]
         await asyncio.gather(*chunk_tasks)
 
         logger.info("Completed processing all chunks")
-
 
         # Process qualified candidates and prepare email notifications
 
@@ -68,47 +88,34 @@ async def process_zip_extracted_files(extracted_dir: str, batch_id: uuid.UUID, j
             shutil.rmtree(extracted_dir)
             logger.info(f"Successfully cleaned up directory: {extracted_dir}")
 
-   
-            # from utils.utils import get_redis_client
-
-            stream_message_id = stream_details.get("stream_message_id")
-            group_name = stream_details.get("group_name")
-            stream_name = stream_details.get("stream_name")
-
-            redis_client = await get_redis_client()
-            
-            await redis_client.xack(stream_name, group_name, stream_message_id)
-            
-            await redis_client.xdel(stream_name, stream_message_id)
-
-            logger.info(f"Deleted message {stream_message_id} from stream '{stream_name}'")
-
-
+            await delete_from_stream(stream_details)
             logger.info(f"Successfully cleaned up directory: {extracted_dir}")
-            # await redis_client.xack(STREAM_NAME, GROUP_NAME, message_id)
 
         except Exception as e:
-            logger.error(f"Failed to cleanup directory {extracted_dir}: {str(e)}", exc_info=True)
-
-
-
-
-
-
-
-
-
-
+            logger.error(
+                f"Failed to cleanup directory {extracted_dir}: {str(e)}", exc_info=True
+            )
 
 
 async def _process_file_chunks(
-    chunks: List[str], extracted_dir: str, batch_id: uuid.UUID, job_id: str, job_data: dict, user_id: str, company_id: str
+    chunks: List[str],
+    extracted_dir: str,
+    batch_id: uuid.UUID,
+    job_id: str,
+    job_data: dict,
+    user_id: str,
+    company_id: str,
 ):
     """Process a chunk of PDF files concurrently and efficiently"""
     logger.info(f"Processing chunk of {len(chunks)} files from {extracted_dir}")
 
     # Process PDFs concurrently
-    tasks = [_process_files(os.path.join(extracted_dir, file), job_data.get("job_id"), user_id) for file in chunks]
+    tasks = [
+        _process_files(
+            os.path.join(extracted_dir, file), job_data.get("job_id"), user_id
+        )
+        for file in chunks
+    ]
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
     # Efficiently separate valid results and count errors
@@ -138,7 +145,9 @@ async def _process_file_chunks(
             elif isinstance(result, list):
                 valid_results.append(result)
 
-    logger.info(f"Processed chunk: {len(valid_results)} successful, {error_count} failed")
+    logger.info(
+        f"Processed chunk: {len(valid_results)} successful, {error_count} failed"
+    )
 
     await asyncio.sleep(2)
 
@@ -207,13 +216,8 @@ async def _process_file_chunks(
     #     logger.info(f"Successfully inserted {len(invalid_results)} errored candidate details into database")
 
 
-
-
-
 class TextExtractionFailedException(Exception):
     pass
-
-
 
 
 async def _process_files(file_path: str, job_name: str, user_id: str):
@@ -230,18 +234,16 @@ async def _process_files(file_path: str, job_name: str, user_id: str):
             extracted_texts.insert_one(
                 {
                     "job_name": job_name,
-                    "user_id":user_id,
-                    "parse_text" : text if text else ""
-
+                    "user_id": user_id,
+                    "parse_text": text if text else "",
                 }
             )
-        
 
         logger.info(f"text extracted ... for  {file_path}")
         if file_path.lower().endswith((".docx", ".doc")) and not text:
             # raise exception on failed word files
             raise TextExtractionFailedException("Error parsing")
-        
+
         await asyncio.sleep(2)
 
         # Parse the CV
@@ -259,15 +261,23 @@ async def _process_files(file_path: str, job_name: str, user_id: str):
         # Upload the CV to S3, set directory link
         # parsed_cv.cv_directory_link = upload_file_to_s3(file_path, job_name, unq_id)s
 
-        logger.info(f"Successfully parsed {'PDF' if file_path.endswith('pdf') else 'WORD'} file: {file_path}")
+        logger.info(
+            f"Successfully parsed {'PDF' if file_path.endswith('pdf') else 'WORD'} file: {file_path}"
+        )
 
         # return parsed_cv
         return text
 
     except Exception as e:
         if isinstance(e, EmptyFileException):
-            logger.error(f"{file_path}, contains no text. Moving to errors collection. \n{str(e)}", exc_info=True)
+            logger.error(
+                f"{file_path}, contains no text. Moving to errors collection. \n{str(e)}",
+                exc_info=True,
+            )
         else:
-            logger.error(f"Error extracting text from {file_path}: {str(e)}, moving to errors collection", exc_info=True)
+            logger.error(
+                f"Error extracting text from {file_path}: {str(e)}, moving to errors collection",
+                exc_info=True,
+            )
         # return {"error": str(e), "cv_directory_link": upload_file_to_s3(file_path, job_name, unq_id)}
-        return {"error": str(e), "cv_directory_link":"link"}
+        return {"error": str(e), "cv_directory_link": "link"}

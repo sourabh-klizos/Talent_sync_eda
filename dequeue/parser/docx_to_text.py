@@ -22,9 +22,24 @@ class DocxExtractor:
         table_paragraphs = set()
         try:
             # Use XPath to find all paragraphs within table cells
-            for tbl in parent.element.body.findall(".//w:tbl", namespaces={"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}):
-                for cell in tbl.findall(".//w:tc", namespaces={"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}):
-                    for para in cell.findall(".//w:p", namespaces={"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}):
+            for tbl in parent.element.body.findall(
+                ".//w:tbl",
+                namespaces={
+                    "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+                },
+            ):
+                for cell in tbl.findall(
+                    ".//w:tc",
+                    namespaces={
+                        "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+                    },
+                ):
+                    for para in cell.findall(
+                        ".//w:p",
+                        namespaces={
+                            "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+                        },
+                    ):
                         table_paragraphs.add(para)
         except Exception as e:
             print(f"Warning: Error collecting table paragraphs: {e}")
@@ -130,11 +145,19 @@ class DocxExtractor:
                                 if vval != "restart":
                                     # Find the starting cell
                                     for prev_i in range(i):
-                                        if (prev_i, j) in merged_cells and merged_cells[(prev_i, j)]["active"]:
-                                            merged_cells[(i, j)] = {"original": (prev_i, j), "active": False}
+                                        if (prev_i, j) in merged_cells and merged_cells[
+                                            (prev_i, j)
+                                        ]["active"]:
+                                            merged_cells[(i, j)] = {
+                                                "original": (prev_i, j),
+                                                "active": False,
+                                            }
                                             break
                                 else:
-                                    merged_cells[(i, j)] = {"original": None, "active": True}
+                                    merged_cells[(i, j)] = {
+                                        "original": None,
+                                        "active": True,
+                                    }
         except Exception as e:
             print(f"Warning: Error detecting merged cells: {e}")
 
@@ -149,7 +172,9 @@ class DocxExtractor:
             row_cells = []
             for j, cell in enumerate(row.cells):
                 # If this is a continuation of a merged cell, use empty string
-                if (i, j) in merged_cells and merged_cells[(i, j)]["original"] is not None:
+                if (i, j) in merged_cells and merged_cells[(i, j)][
+                    "original"
+                ] is not None:
                     row_cells.append("")
                 else:
                     cell_text = cls.extract_cell_text(cell)
@@ -186,7 +211,9 @@ class DocxExtractor:
                     if len(row) > 1 and row[1].strip():
                         # This is a sub-label with value
                         if len(row) > 2 and row[2].strip():
-                            hierarchical_rows.append([current_main_label, row[1], row[2]])
+                            hierarchical_rows.append(
+                                [current_main_label, row[1], row[2]]
+                            )
                         else:
                             hierarchical_rows.append([current_main_label, row[1], ""])
 
@@ -226,7 +253,9 @@ class DocxExtractor:
 
             # Check for email addresses and phone numbers in rightmost column
             has_contact_info = any(
-                "@" in cell or any(c.isdigit() for c in cell) for cell in rightmost_col if cell  # Email pattern  # Phone numbers have digits
+                "@" in cell or any(c.isdigit() for c in cell)
+                for cell in rightmost_col
+                if cell  # Email pattern  # Phone numbers have digits
             )
 
             # If rightmost column has contact info, prioritize values from there
@@ -251,7 +280,11 @@ class DocxExtractor:
                             break
 
                     # Get value from rightmost column
-                    value = row[rightmost_col_idx].strip() if rightmost_col_idx < len(row) else ""
+                    value = (
+                        row[rightmost_col_idx].strip()
+                        if rightmost_col_idx < len(row)
+                        else ""
+                    )
 
                     # Only add if we have a value or label
                     if value or label:
@@ -292,7 +325,9 @@ class DocxExtractor:
                     total_comparisons = 0
 
                     # Compare values at same positions
-                    for idx in range(min(len(column_content[i]), len(column_content[j]))):
+                    for idx in range(
+                        min(len(column_content[i]), len(column_content[j]))
+                    ):
                         if column_content[i][idx] and column_content[j][idx]:
                             total_comparisons += 1
                             if column_content[i][idx] == column_content[j][idx]:
@@ -307,7 +342,9 @@ class DocxExtractor:
                 clean_columns = [i for i in range(col_count) if i not in duplicate_cols]
                 clean_data = []
                 for row in cell_texts:
-                    clean_row = [row[col] if col < len(row) else "" for col in clean_columns]
+                    clean_row = [
+                        row[col] if col < len(row) else "" for col in clean_columns
+                    ]
                     clean_data.append(clean_row)
 
                 cell_texts = clean_data
@@ -343,14 +380,19 @@ class DocxExtractor:
                         # This helps catch important contact information that might be missed
                         for i in range(2, len(row)):
                             cell_content = row[i].strip()
-                            if cell_content and ("@" in cell_content or any(c.isdigit() for c in cell_content)):
+                            if cell_content and (
+                                "@" in cell_content
+                                or any(c.isdigit() for c in cell_content)
+                            ):
                                 if label and not value:
                                     value = cell_content
                                 elif label and value != cell_content:
                                     # Add as a separate entry
                                     pair_key = (label, cell_content)
                                     if pair_key not in seen_label_values:
-                                        structured_data.append([current_section, label, cell_content])
+                                        structured_data.append(
+                                            [current_section, label, cell_content]
+                                        )
                                         seen_label_values.add(pair_key)
 
                         # Add remaining values if present
@@ -362,14 +404,21 @@ class DocxExtractor:
                                 else:
                                     value = " ".join(extra_values)
 
-                        if (label or value) and (current_section, label, value) not in seen_label_values:
+                        if (label or value) and (
+                            current_section,
+                            label,
+                            value,
+                        ) not in seen_label_values:
                             # Create row with section, label, value
                             structured_data.append([current_section, label, value])
                             seen_label_values.add((current_section, label, value))
 
                     elif len(row) == 2:  # Section + Content
                         content = row[1].strip() if len(row) > 1 else ""
-                        if content and (current_section, "", content) not in seen_label_values:
+                        if (
+                            content
+                            and (current_section, "", content) not in seen_label_values
+                        ):
                             structured_data.append([current_section, "", content])
                             seen_label_values.add((current_section, "", content))
 
@@ -457,8 +506,12 @@ class DocxExtractor:
             right_col = [row[1] for row in clean_rows]
 
             # Calculate average content length
-            left_avg = sum(len(c) for c in left_col if c) / max(1, sum(1 for c in left_col if c))
-            right_avg = sum(len(c) for c in right_col if c) / max(1, sum(1 for c in right_col if c))
+            left_avg = sum(len(c) for c in left_col if c) / max(
+                1, sum(1 for c in left_col if c)
+            )
+            right_avg = sum(len(c) for c in right_col if c) / max(
+                1, sum(1 for c in right_col if c)
+            )
 
             # If left column looks like labels (shorter than right column content)
             if left_avg < right_avg * 0.7:
@@ -476,7 +529,11 @@ class DocxExtractor:
                     pair = (label.strip(), value.strip())
                     if pair not in used_pairs:
                         # If label might be a section header (all caps or short)
-                        if label and (label.isupper() or len(label.split()) <= 2) and not current_section:
+                        if (
+                            label
+                            and (label.isupper() or len(label.split()) <= 2)
+                            and not current_section
+                        ):
                             result.append(f"{label}")
                             current_section = label
                         elif label and value:
@@ -504,7 +561,11 @@ class DocxExtractor:
             col_content = [row[col_idx] for row in clean_rows if col_idx < len(row)]
 
             # Detect if column is mostly numeric
-            numeric_count = sum(1 for c in col_content if c and c.replace(".", "", 1).replace("-", "", 1).isdigit())
+            numeric_count = sum(
+                1
+                for c in col_content
+                if c and c.replace(".", "", 1).replace("-", "", 1).isdigit()
+            )
             is_numeric = numeric_count > len(col_content) * 0.7
 
             # Measure content length
@@ -545,7 +606,10 @@ class DocxExtractor:
             for word in text.split():
                 if len(word) > width:
                     # Break long word into chunks
-                    chunks = [word[i : i + width - 1] + "-" for i in range(0, len(word), width - 1)]
+                    chunks = [
+                        word[i : i + width - 1] + "-"
+                        for i in range(0, len(word), width - 1)
+                    ]
                     # Fix last chunk (no hyphen if it fits)
                     if chunks and len(chunks[-1]) <= width - 1:
                         chunks[-1] = chunks[-1][:-1]  # Remove hyphen
@@ -587,7 +651,9 @@ class DocxExtractor:
         for line_idx in range(header_height):
             row_cells = []
             for i, wrapped_cell in enumerate(header_wrapped):
-                cell_text = wrapped_cell[line_idx] if line_idx < len(wrapped_cell) else ""
+                cell_text = (
+                    wrapped_cell[line_idx] if line_idx < len(wrapped_cell) else ""
+                )
                 # Headers are always left-aligned
                 row_cells.append(cell_text.ljust(col_widths[i]))
             table_lines.append("| " + " | ".join(row_cells) + " |")
@@ -627,13 +693,19 @@ class DocxExtractor:
             for line_idx in range(row_height):
                 row_cells = []
                 for i, wrapped_cell in enumerate(row_wrapped):
-                    cell_text = wrapped_cell[line_idx] if line_idx < len(wrapped_cell) else ""
+                    cell_text = (
+                        wrapped_cell[line_idx] if line_idx < len(wrapped_cell) else ""
+                    )
 
                     # Align based on content type
                     if col_types[i] == "numeric":
-                        row_cells.append(cell_text.rjust(col_widths[i]))  # Right-align numbers
+                        row_cells.append(
+                            cell_text.rjust(col_widths[i])
+                        )  # Right-align numbers
                     else:
-                        row_cells.append(cell_text.ljust(col_widths[i]))  # Left-align text
+                        row_cells.append(
+                            cell_text.ljust(col_widths[i])
+                        )  # Left-align text
 
                 table_lines.append("| " + " | ".join(row_cells) + " |")
 
@@ -665,7 +737,12 @@ class DocxExtractor:
         if len(t1) > 50 and len(t2) > 50:
             token_set = fuzz.token_set_ratio(t1, t2) / 100.0
             # Weighted average of different metrics
-            return (0.2 * len_ratio) + (0.3 * ratio) + (0.25 * token_sort) + (0.25 * token_set)
+            return (
+                (0.2 * len_ratio)
+                + (0.3 * ratio)
+                + (0.25 * token_sort)
+                + (0.25 * token_set)
+            )
         else:
             # For shorter texts
             return (0.3 * len_ratio) + (0.35 * ratio) + (0.35 * token_sort)
@@ -700,8 +777,16 @@ class DocxExtractor:
 
                             if vMerge or gridSpan:
                                 spans[(i, j)] = {
-                                    "vMerge": vMerge.get(qn("w:val")) if vMerge and vMerge.get(qn("w:val")) else "continue" if vMerge else None,
-                                    "gridSpan": int(gridSpan.get(qn("w:val"))) if gridSpan else 1,
+                                    "vMerge": (
+                                        vMerge.get(qn("w:val"))
+                                        if vMerge and vMerge.get(qn("w:val"))
+                                        else "continue" if vMerge else None
+                                    ),
+                                    "gridSpan": (
+                                        int(gridSpan.get(qn("w:val")))
+                                        if gridSpan
+                                        else 1
+                                    ),
                                 }
             except Exception as e:
                 # Continue even if span detection fails
@@ -724,8 +809,12 @@ class DocxExtractor:
             flattened = cls.flatten_table(docx_table, include_header=True)
 
             # If flattening didn't lose too much content, use it
-            original_char_count = sum(len(str(cell)) for row in original_content for cell in row if cell)
-            flattened_char_count = sum(len(str(cell)) for row in flattened for cell in row if cell)
+            original_char_count = sum(
+                len(str(cell)) for row in original_content for cell in row if cell
+            )
+            flattened_char_count = sum(
+                len(str(cell)) for row in flattened for cell in row if cell
+            )
 
             # If we preserved at least 85% of content, use flattened version
             if flattened_char_count >= 0.85 * original_char_count:
@@ -742,7 +831,9 @@ class DocxExtractor:
                 cleaned_row = []
                 prev_cell = None
                 for cell in row:
-                    if cell != prev_cell or not cell:  # Keep empty cells and unique content
+                    if (
+                        cell != prev_cell or not cell
+                    ):  # Keep empty cells and unique content
                         cleaned_row.append(cell)
                         prev_cell = cell
 
@@ -775,7 +866,12 @@ class DocxExtractor:
         # Extract footnotes from the document
         if hasattr(doc.part, "footnotes") and doc.part.footnotes:
             for idx, footnote in enumerate(
-                doc.part.footnotes.element.findall(".//w:footnote", namespaces={"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"})
+                doc.part.footnotes.element.findall(
+                    ".//w:footnote",
+                    namespaces={
+                        "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+                    },
+                )
             ):
 
                 # Skip separator and continuation separator footnotes (ids -1 and 0)
@@ -786,7 +882,12 @@ class DocxExtractor:
                 # Collect all text from the footnote
                 note_parts = [
                     node.text
-                    for node in footnote.findall(".//w:t", namespaces={"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"})
+                    for node in footnote.findall(
+                        ".//w:t",
+                        namespaces={
+                            "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+                        },
+                    )
                     if node.text
                 ]
                 note_text = " ".join(note_parts).strip()
@@ -798,7 +899,10 @@ class DocxExtractor:
         for para in doc.paragraphs:
             for run in para.runs:
                 for ref in run._element.findall(
-                    ".//w:footnoteReference", namespaces={"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+                    ".//w:footnoteReference",
+                    namespaces={
+                        "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+                    },
                 ):
 
                     ref_id = ref.get(qn("w:id"))
@@ -830,7 +934,9 @@ class DocxExtractor:
         if has_numbering or is_bullet_list or is_numbered_list:
             # Determine indentation level
             left_indent = para.paragraph_format.left_indent
-            indent_level = 0 if left_indent is None else min(3, int(left_indent.pt / 18))  # Cap at 3 levels
+            indent_level = (
+                0 if left_indent is None else min(3, int(left_indent.pt / 18))
+            )  # Cap at 3 levels
             indent_spaces = "  " * indent_level  # Two spaces per indent level
 
             # Format based on list type
@@ -1009,10 +1115,16 @@ class DocxExtractor:
             text = paragraph.text.strip().lower()
 
             # Check for explicit table references
-            has_table_ref = text.startswith("table") or "table " in text or re.search(r"tab\.?\s+\d", text)
+            has_table_ref = (
+                text.startswith("table")
+                or "table " in text
+                or re.search(r"tab\.?\s+\d", text)
+            )
 
             # Check for caption-like formatting
-            has_caption_format = ":" in text or bool(re.match(r"^(figure|fig|table|tab)\.?\s*\d", text))
+            has_caption_format = ":" in text or bool(
+                re.match(r"^(figure|fig|table|tab)\.?\s*\d", text)
+            )
 
             # If it looks like a caption and the next block is a table, it's likely a table caption
             return next_block_is_table and (has_table_ref or has_caption_format)
@@ -1036,7 +1148,11 @@ class DocxExtractor:
                             # Create fingerprint
                             fingerprint = cls.get_content_fingerprint(cell_text)
                             if fingerprint:
-                                table_content[fingerprint] = {"text": cell_text, "table_id": table_id, "position": (row_idx, col_idx)}
+                                table_content[fingerprint] = {
+                                    "text": cell_text,
+                                    "table_id": table_id,
+                                    "position": (row_idx, col_idx),
+                                }
 
                             # Also process paragraphs within cell
                             for para in cell_text.split("\n"):
@@ -1089,7 +1205,12 @@ class DocxExtractor:
 
                     # Skip empty paragraphs unless needed for spacing
                     if not para_text:
-                        if output and output[-1] and not prev_was_table and not prev_was_caption:
+                        if (
+                            output
+                            and output[-1]
+                            and not prev_was_table
+                            and not prev_was_caption
+                        ):
                             output.append("")
                         continue
 
@@ -1104,7 +1225,9 @@ class DocxExtractor:
                         # Check if similar to table content
                         is_duplicate = False
                         for table_fp, table_info in table_content.items():
-                            similarity = cls.content_similarity(para_text, table_info["text"])
+                            similarity = cls.content_similarity(
+                                para_text, table_info["text"]
+                            )
                             # Skip if very similar
                             if similarity > 0.85:
                                 is_duplicate = True
@@ -1118,7 +1241,13 @@ class DocxExtractor:
                     list_item = cls.handle_lists(block)
                     if list_item:
                         if not in_list:
-                            if output and output[-1] and not prev_was_table and not prev_was_header and not prev_was_caption:
+                            if (
+                                output
+                                and output[-1]
+                                and not prev_was_table
+                                and not prev_was_header
+                                and not prev_was_caption
+                            ):
                                 output.append("")
                             in_list = True
                         list_items.append(list_item)
@@ -1131,7 +1260,13 @@ class DocxExtractor:
 
                     # Check if it's a header
                     if cls.is_header(block):
-                        if output and output[-1] and not prev_was_header and not prev_was_table and not prev_was_caption:
+                        if (
+                            output
+                            and output[-1]
+                            and not prev_was_header
+                            and not prev_was_table
+                            and not prev_was_caption
+                        ):
                             output.append("")
 
                         if para_text.isupper() and len(para_text.split()) <= 3:
@@ -1140,28 +1275,42 @@ class DocxExtractor:
                             output.append(f"### {para_text}")
 
                         if len(para_text) > 10:
-                            processed_content.add(cls.get_content_fingerprint(para_text))
+                            processed_content.add(
+                                cls.get_content_fingerprint(para_text)
+                            )
 
                         prev_was_header = True
                         prev_was_table = False
                         prev_was_caption = False
                     else:
                         # Regular paragraph
-                        if (prev_was_table or prev_was_caption) and output and output[-1]:
+                        if (
+                            (prev_was_table or prev_was_caption)
+                            and output
+                            and output[-1]
+                        ):
                             if output[-1].strip():
                                 output.append("")
 
                         output.append(para_text)
 
                         if len(para_text) > 15:
-                            processed_content.add(cls.get_content_fingerprint(para_text))
+                            processed_content.add(
+                                cls.get_content_fingerprint(para_text)
+                            )
 
                         prev_was_header = False
                         prev_was_table = False
                         prev_was_caption = False
 
                 elif isinstance(block, Table):
-                    if output and output[-1] and not output[-1].isspace() and not prev_was_table and not prev_was_caption:
+                    if (
+                        output
+                        and output[-1]
+                        and not output[-1].isspace()
+                        and not prev_was_table
+                        and not prev_was_caption
+                    ):
                         output.append("")
 
                     # Process table with robust error handling
@@ -1207,7 +1356,11 @@ class DocxExtractor:
             return False
 
         # Get paragraph style name
-        style_name = para.style.name.lower() if para.style and hasattr(para.style, "name") else ""
+        style_name = (
+            para.style.name.lower()
+            if para.style and hasattr(para.style, "name")
+            else ""
+        )
 
         # Check if explicitly styled as a heading
         if "heading" in style_name or style_name.startswith("h"):
@@ -1222,7 +1375,9 @@ class DocxExtractor:
             return False
 
         # Check if this paragraph is part of a table (additional check)
-        if para._p.find(qn("w:tbl")) is not None or para._p.getparent().tag == qn("w:tc"):
+        if para._p.find(qn("w:tbl")) is not None or para._p.getparent().tag == qn(
+            "w:tc"
+        ):
             return False
 
         # Get paragraph text
@@ -1258,14 +1413,20 @@ class DocxExtractor:
         is_short = len(text.split()) <= 8
 
         # Apply heuristics to determine if this is a header
-        if (is_all_caps and is_short) or (is_bold and is_short and not ends_with_sentence_punct):
+        if (is_all_caps and is_short) or (
+            is_bold and is_short and not ends_with_sentence_punct
+        ):
             return True
 
         if is_larger_font and is_short and not ends_with_sentence_punct:
             return True
 
         # Check for numbered headers like "1.2 Section Title"
-        if re.match(r"^\d+(\.\d+)*\s+\S", text) and is_short and (is_bold or is_larger_font):
+        if (
+            re.match(r"^\d+(\.\d+)*\s+\S", text)
+            and is_short
+            and (is_bold or is_larger_font)
+        ):
             return True
 
         return False

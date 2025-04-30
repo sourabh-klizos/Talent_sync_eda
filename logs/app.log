@@ -1,0 +1,150 @@
+2025-04-30 19:09:34,105 - INFO - Consumer group already exists
+2025-04-30 19:09:34,106 - INFO - Running with multiple consumers
+2025-04-30 19:09:39,075 - INFO - Extracted 9 files from sample-report_new.zip, Batch ID: 
+2025-04-30 19:09:39,079 - INFO - Extracted 1 files from resume-sample.zip, Batch ID: 
+2025-04-30 19:09:39,095 - INFO - Extracted 4 files from sample-local-pdf (2).zip, Batch ID: 
+2025-04-30 19:09:39,104 - INFO - Extracted 1 files from 2mb.zip, Batch ID: 
+2025-04-30 19:09:39,111 - INFO - Extracted 1 files from 1mb.zip, Batch ID: 
+2025-04-30 19:09:39,113 - INFO - Extracted 1 files from sample-local-pdf.zip, Batch ID: 
+2025-04-30 19:09:39,115 - INFO - Extracted 1 files from sample.zip, Batch ID: 
+2025-04-30 19:09:39,118 - INFO - Response: {'message': {'extracted_dir': ['C:\\Users\\Sourabh Kumar Das\\Desktop\\Talent_sync_eda\\backend\\zip_dir\\sample-report_new', 'C:\\Users\\Sourabh Kumar Das\\Desktop\\Talent_sync_eda\\backend\\zip_dir\\resume-sample', 'C:\\Users\\Sourabh Kumar Das\\Desktop\\Talent_sync_eda\\backend\\zip_dir\\sample-local-pdf (2)', 'C:\\Users\\Sourabh Kumar Das\\Desktop\\Talent_sync_eda\\backend\\zip_dir\\2mb', 'C:\\Users\\Sourabh Kumar Das\\Desktop\\Talent_sync_eda\\backend\\zip_dir\\1mb', 'C:\\Users\\Sourabh Kumar Das\\Desktop\\Talent_sync_eda\\backend\\zip_dir\\sample-local-pdf', 'C:\\Users\\Sourabh Kumar Das\\Desktop\\Talent_sync_eda\\backend\\zip_dir\\sample'], 'batch_id': 'a2384048-2c54-4f29-9835-e3d64c41c3e8', 'user_id': '6812281b93f981087545c68a', 'company_id': '6812281b93f981087545c68b'}}
+2025-04-30 19:09:39,119 - INFO - Processing message 1746020379117-0 -> {'message': {'extracted_dir': ['C:\\Users\\Sourabh Kumar Das\\Desktop\\Talent_sync_eda\\backend\\zip_dir\\sample-report_new', 'C:\\Users\\Sourabh Kumar Das\\Desktop\\Talent_sync_eda\\backend\\zip_dir\\resume-sample', 'C:\\Users\\Sourabh Kumar Das\\Desktop\\Talent_sync_eda\\backend\\zip_dir\\sample-local-pdf (2)', 'C:\\Users\\Sourabh Kumar Das\\Desktop\\Talent_sync_eda\\backend\\zip_dir\\2mb', 'C:\\Users\\Sourabh Kumar Das\\Desktop\\Talent_sync_eda\\backend\\zip_dir\\1mb', 'C:\\Users\\Sourabh Kumar Das\\Desktop\\Talent_sync_eda\\backend\\zip_dir\\sample-local-pdf', 'C:\\Users\\Sourabh Kumar Das\\Desktop\\Talent_sync_eda\\backend\\zip_dir\\sample'], 'batch_id': 'a2384048-2c54-4f29-9835-e3d64c41c3e8', 'user_id': '6812281b93f981087545c68a', 'company_id': '6812281b93f981087545c68b'}}
+2025-04-30 19:09:39,119 - INFO - Processing extracted directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new
+2025-04-30 19:09:39,119 - INFO - Starting to process files from extracted directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new
+2025-04-30 19:09:39,119 - INFO - Found 6 CV files to process
+2025-04-30 19:09:39,120 - INFO - files ['basic-text.pdf', 'demo.docx', 'image-doc.pdf', 'sample-files.com-basic-text.docx', 'sample-files.com-formatted-report.docx', 'sample-report.pdf']
+2025-04-30 19:09:39,120 - INFO - Split files into 2 non-overlapping chunks
+2025-04-30 19:09:39,120 - INFO - Processing chunk of 4 files from C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new
+2025-04-30 19:09:39,120 - INFO - Processing chunk of 2 files from C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new
+2025-04-30 19:09:39,121 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\basic-text.pdf
+2025-04-30 19:09:40,138 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\demo.docx
+2025-04-30 19:09:40,138 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\image-doc.pdf
+2025-04-30 19:09:41,292 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\sample-files.com-basic-text.docx
+2025-04-30 19:09:41,292 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\sample-files.com-formatted-report.docx
+2025-04-30 19:09:41,293 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\sample-report.pdf
+2025-04-30 19:09:41,302 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\demo.docx
+2025-04-30 19:09:41,324 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\basic-text.pdf
+2025-04-30 19:09:41,407 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\image-doc.pdf
+2025-04-30 19:09:41,501 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\sample-report.pdf
+2025-04-30 19:09:41,506 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\sample-files.com-formatted-report.docx
+2025-04-30 19:09:41,509 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\sample-files.com-basic-text.docx
+2025-04-30 19:09:43,321 - INFO - Successfully parsed WORD file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\demo.docx
+2025-04-30 19:09:43,321 - INFO - Successfully parsed PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\basic-text.pdf
+2025-04-30 19:09:43,430 - INFO - Successfully parsed PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\image-doc.pdf
+2025-04-30 19:09:43,494 - INFO - Successfully parsed PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\sample-report.pdf
+2025-04-30 19:09:43,526 - INFO - Successfully parsed WORD file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\sample-files.com-formatted-report.docx
+2025-04-30 19:09:43,526 - INFO - Successfully parsed WORD file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new\sample-files.com-basic-text.docx
+2025-04-30 19:09:43,526 - INFO - Processed chunk: 0 successful, 0 failed
+2025-04-30 19:09:43,526 - INFO - Processed chunk: 0 successful, 0 failed
+2025-04-30 19:09:45,534 - INFO - Completed processing all chunks
+2025-04-30 19:09:45,534 - INFO - Starting processing for batch a2384048-2c54-4f29-9835-e3d64c41c3e8
+2025-04-30 19:09:47,537 - INFO - Successfully processed batch a2384048-2c54-4f29-9835-e3d64c41c3e8
+2025-04-30 19:09:47,543 - INFO - Successfully cleaned up directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new
+2025-04-30 19:09:47,546 - INFO - Deleted message 1746020379117-0 from stream 'process_pdfs'
+2025-04-30 19:09:47,546 - INFO - Successfully cleaned up directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-report_new
+2025-04-30 19:09:47,547 - INFO - Processing extracted directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\resume-sample
+2025-04-30 19:09:47,547 - INFO - Starting to process files from extracted directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\resume-sample
+2025-04-30 19:09:47,547 - INFO - Found 1 CV files to process
+2025-04-30 19:09:47,547 - INFO - files ['resume-sample.pdf']
+2025-04-30 19:09:47,548 - INFO - Split files into 1 non-overlapping chunks
+2025-04-30 19:09:47,548 - INFO - Processing chunk of 1 files from C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\resume-sample
+2025-04-30 19:09:47,548 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\resume-sample\resume-sample.pdf
+2025-04-30 19:09:47,656 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\resume-sample\resume-sample.pdf
+2025-04-30 19:09:49,658 - INFO - Successfully parsed PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\resume-sample\resume-sample.pdf
+2025-04-30 19:09:49,659 - INFO - Processed chunk: 0 successful, 0 failed
+2025-04-30 19:09:51,672 - INFO - Completed processing all chunks
+2025-04-30 19:09:51,672 - INFO - Starting processing for batch a2384048-2c54-4f29-9835-e3d64c41c3e8
+2025-04-30 19:09:53,687 - INFO - Successfully processed batch a2384048-2c54-4f29-9835-e3d64c41c3e8
+2025-04-30 19:09:53,688 - INFO - Successfully cleaned up directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\resume-sample
+2025-04-30 19:09:53,691 - INFO - Deleted message 1746020379117-0 from stream 'process_pdfs'
+2025-04-30 19:09:53,691 - INFO - Successfully cleaned up directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\resume-sample
+2025-04-30 19:09:53,691 - INFO - Processing extracted directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)
+2025-04-30 19:09:53,691 - INFO - Starting to process files from extracted directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)
+2025-04-30 19:09:53,692 - INFO - Found 4 CV files to process
+2025-04-30 19:09:53,693 - INFO - files ['1mb.pdf', '2mb.pdf', 'sample-local-pdf.pdf', 'sample.pdf']
+2025-04-30 19:09:53,693 - INFO - Split files into 1 non-overlapping chunks
+2025-04-30 19:09:53,693 - INFO - Processing chunk of 4 files from C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)
+2025-04-30 19:09:53,694 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)\1mb.pdf
+2025-04-30 19:09:54,711 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)\2mb.pdf
+2025-04-30 19:09:55,726 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)\sample-local-pdf.pdf
+2025-04-30 19:09:55,731 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)\sample.pdf
+2025-04-30 19:09:55,772 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)\sample.pdf
+2025-04-30 19:09:55,799 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)\sample-local-pdf.pdf
+2025-04-30 19:09:56,455 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)\1mb.pdf
+2025-04-30 19:09:57,786 - INFO - Successfully parsed PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)\sample.pdf
+2025-04-30 19:09:57,786 - INFO - Successfully parsed PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)\sample-local-pdf.pdf
+2025-04-30 19:09:58,010 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)\2mb.pdf
+2025-04-30 19:09:58,461 - INFO - Successfully parsed PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)\1mb.pdf
+2025-04-30 19:10:00,013 - INFO - Successfully parsed PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)\2mb.pdf
+2025-04-30 19:10:00,013 - INFO - Processed chunk: 0 successful, 0 failed
+2025-04-30 19:10:02,018 - INFO - Completed processing all chunks
+2025-04-30 19:10:02,018 - INFO - Starting processing for batch a2384048-2c54-4f29-9835-e3d64c41c3e8
+2025-04-30 19:10:04,025 - INFO - Successfully processed batch a2384048-2c54-4f29-9835-e3d64c41c3e8
+2025-04-30 19:10:08,082 - INFO - Successfully cleaned up directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)
+2025-04-30 19:10:08,084 - INFO - Deleted message 1746020379117-0 from stream 'process_pdfs'
+2025-04-30 19:10:08,085 - INFO - Successfully cleaned up directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf (2)
+2025-04-30 19:10:08,085 - INFO - Processing extracted directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\2mb
+2025-04-30 19:10:08,085 - INFO - Starting to process files from extracted directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\2mb
+2025-04-30 19:10:08,085 - INFO - Found 1 CV files to process
+2025-04-30 19:10:08,086 - INFO - files ['2mb.pdf']
+2025-04-30 19:10:08,086 - INFO - Split files into 1 non-overlapping chunks
+2025-04-30 19:10:08,086 - INFO - Processing chunk of 1 files from C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\2mb
+2025-04-30 19:10:08,086 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\2mb\2mb.pdf
+2025-04-30 19:10:10,370 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\2mb\2mb.pdf
+2025-04-30 19:10:12,378 - INFO - Successfully parsed PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\2mb\2mb.pdf
+2025-04-30 19:10:12,378 - INFO - Processed chunk: 0 successful, 0 failed
+2025-04-30 19:10:14,381 - INFO - Completed processing all chunks
+2025-04-30 19:10:14,381 - INFO - Starting processing for batch a2384048-2c54-4f29-9835-e3d64c41c3e8
+2025-04-30 19:10:16,384 - INFO - Successfully processed batch a2384048-2c54-4f29-9835-e3d64c41c3e8
+2025-04-30 19:10:16,385 - INFO - Successfully cleaned up directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\2mb
+2025-04-30 19:10:16,387 - INFO - Deleted message 1746020379117-0 from stream 'process_pdfs'
+2025-04-30 19:10:16,387 - INFO - Successfully cleaned up directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\2mb
+2025-04-30 19:10:16,388 - INFO - Processing extracted directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\1mb
+2025-04-30 19:10:16,388 - INFO - Starting to process files from extracted directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\1mb
+2025-04-30 19:10:16,388 - INFO - Found 1 CV files to process
+2025-04-30 19:10:16,389 - INFO - files ['1mb.pdf']
+2025-04-30 19:10:16,389 - INFO - Split files into 1 non-overlapping chunks
+2025-04-30 19:10:16,389 - INFO - Processing chunk of 1 files from C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\1mb
+2025-04-30 19:10:16,389 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\1mb\1mb.pdf
+2025-04-30 19:10:18,086 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\1mb\1mb.pdf
+2025-04-30 19:10:20,098 - INFO - Successfully parsed PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\1mb\1mb.pdf
+2025-04-30 19:10:20,098 - INFO - Processed chunk: 0 successful, 0 failed
+2025-04-30 19:10:22,105 - INFO - Completed processing all chunks
+2025-04-30 19:10:22,105 - INFO - Starting processing for batch a2384048-2c54-4f29-9835-e3d64c41c3e8
+2025-04-30 19:10:24,116 - INFO - Successfully processed batch a2384048-2c54-4f29-9835-e3d64c41c3e8
+2025-04-30 19:10:24,118 - INFO - Successfully cleaned up directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\1mb
+2025-04-30 19:10:24,120 - INFO - Deleted message 1746020379117-0 from stream 'process_pdfs'
+2025-04-30 19:10:24,121 - INFO - Successfully cleaned up directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\1mb
+2025-04-30 19:10:24,121 - INFO - Processing extracted directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf
+2025-04-30 19:10:24,121 - INFO - Starting to process files from extracted directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf
+2025-04-30 19:10:24,122 - INFO - Found 1 CV files to process
+2025-04-30 19:10:24,122 - INFO - files ['sample-local-pdf.pdf']
+2025-04-30 19:10:24,123 - INFO - Split files into 1 non-overlapping chunks
+2025-04-30 19:10:24,123 - INFO - Processing chunk of 1 files from C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf
+2025-04-30 19:10:24,123 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf\sample-local-pdf.pdf
+2025-04-30 19:10:24,392 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf\sample-local-pdf.pdf
+2025-04-30 19:10:26,399 - INFO - Successfully parsed PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf\sample-local-pdf.pdf
+2025-04-30 19:10:26,399 - INFO - Processed chunk: 0 successful, 0 failed
+2025-04-30 19:10:28,416 - INFO - Completed processing all chunks
+2025-04-30 19:10:28,417 - INFO - Starting processing for batch a2384048-2c54-4f29-9835-e3d64c41c3e8
+2025-04-30 19:10:30,431 - INFO - Successfully processed batch a2384048-2c54-4f29-9835-e3d64c41c3e8
+2025-04-30 19:10:30,432 - INFO - Successfully cleaned up directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf
+2025-04-30 19:10:30,435 - INFO - Deleted message 1746020379117-0 from stream 'process_pdfs'
+2025-04-30 19:10:30,436 - INFO - Successfully cleaned up directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample-local-pdf
+2025-04-30 19:10:30,436 - INFO - Processing extracted directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample
+2025-04-30 19:10:30,436 - INFO - Starting to process files from extracted directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample
+2025-04-30 19:10:30,436 - INFO - Found 1 CV files to process
+2025-04-30 19:10:30,437 - INFO - files ['sample.pdf']
+2025-04-30 19:10:30,437 - INFO - Split files into 1 non-overlapping chunks
+2025-04-30 19:10:30,437 - INFO - Processing chunk of 1 files from C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample
+2025-04-30 19:10:30,437 - INFO - Starting to process PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample\sample.pdf
+2025-04-30 19:10:30,490 - INFO - text extracted ... for  C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample\sample.pdf
+2025-04-30 19:10:32,495 - INFO - Successfully parsed PDF file: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample\sample.pdf
+2025-04-30 19:10:32,495 - INFO - Processed chunk: 0 successful, 0 failed
+2025-04-30 19:10:34,499 - INFO - Completed processing all chunks
+2025-04-30 19:10:34,499 - INFO - Starting processing for batch a2384048-2c54-4f29-9835-e3d64c41c3e8
+2025-04-30 19:10:36,505 - INFO - Successfully processed batch a2384048-2c54-4f29-9835-e3d64c41c3e8
+2025-04-30 19:10:36,506 - INFO - Successfully cleaned up directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample
+2025-04-30 19:10:36,509 - INFO - Deleted message 1746020379117-0 from stream 'process_pdfs'
+2025-04-30 19:10:36,509 - INFO - Successfully cleaned up directory: C:\Users\Sourabh Kumar Das\Desktop\Talent_sync_eda\backend\zip_dir\sample
+2025-04-30 19:10:36,509 - INFO - Done processing 1746020379117-0

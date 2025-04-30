@@ -8,6 +8,7 @@ import numpy as np
 import pymupdf
 import pytesseract
 from backend.settings import logger
+
 # from app.misc import Toolkit
 from parser.misc import Toolkit
 from langdetect import DetectorFactory, detect
@@ -53,8 +54,16 @@ class ImageGrabber:
         Returns:
             str: OCR-extracted text with high confidence.
         """
-        data = pytesseract.image_to_data(img_crop, lang=lang, output_type=pytesseract.Output.DICT)
-        confident_text = " ".join([word for word, conf in zip(data["text"], data["conf"]) if int(conf) > min_confidence]).strip()
+        data = pytesseract.image_to_data(
+            img_crop, lang=lang, output_type=pytesseract.Output.DICT
+        )
+        confident_text = " ".join(
+            [
+                word
+                for word, conf in zip(data["text"], data["conf"])
+                if int(conf) > min_confidence
+            ]
+        ).strip()
         return confident_text
 
     @staticmethod
@@ -79,10 +88,14 @@ class ImageGrabber:
             try:
                 detected_lang = detect(sample_text)
                 tesseract_lang = langdetect_to_tesseract.get(detected_lang, "eng")
-                logger.info(f"[🌐] Detected language: {detected_lang} -> Tesseract lang: {tesseract_lang}")
+                logger.info(
+                    f"[🌐] Detected language: {detected_lang} -> Tesseract lang: {tesseract_lang}"
+                )
                 return tesseract_lang
             except Exception as e:
-                logger.error(f"[⚠️] Language detection failed ({e}), defaulting to English.")
+                logger.error(
+                    f"[⚠️] Language detection failed ({e}), defaulting to English."
+                )
                 return "eng"
         else:
             logger.debug("[⚠️] No text detected, defaulting to English.")
@@ -90,7 +103,14 @@ class ImageGrabber:
 
     @classmethod
     def adaptive_overlap_trim(
-        cls, prev_img, curr_img, lang="eng", min_overlap=50, max_overlap=200, similarity_threshold=0.95, text_similarity_threshold=80
+        cls,
+        prev_img,
+        curr_img,
+        lang="eng",
+        min_overlap=50,
+        max_overlap=200,
+        similarity_threshold=0.95,
+        text_similarity_threshold=80,
     ):
         """
         Trims overlapping regions between two consecutive page images using pixel similarity and OCR-based fuzzy matching.
@@ -122,7 +142,9 @@ class ImageGrabber:
 
         # OCR verification (fuzzy matching)
         if best_similarity >= similarity_threshold:
-            prev_crop = prev_img.crop((0, prev_img.height - best_overlap, prev_img.width, prev_img.height))
+            prev_crop = prev_img.crop(
+                (0, prev_img.height - best_overlap, prev_img.width, prev_img.height)
+            )
             curr_crop = curr_img.crop((0, 0, curr_img.width, best_overlap))
 
             prev_text = cls.ocr_text(prev_crop, lang)
@@ -131,14 +153,20 @@ class ImageGrabber:
             text_similarity = fuzz.ratio(prev_text, curr_text) / 100
 
             if text_similarity >= 0.8:
-                logger.info(f"[✅] Fuzzy OCR overlap confirmed ({text_similarity:.3f}, {best_overlap}px). Trimming.")
+                logger.info(
+                    f"[✅] Fuzzy OCR overlap confirmed ({text_similarity:.3f}, {best_overlap}px). Trimming."
+                )
                 return curr_img.crop((0, best_overlap, curr_img.width, curr_img.height))
 
-        logger.info(f"[⚠️] No confirmed overlap (similarity={best_similarity:.3f}). Not trimming.")
+        logger.info(
+            f"[⚠️] No confirmed overlap (similarity={best_similarity:.3f}). Not trimming."
+        )
         return curr_img
 
     @classmethod
-    async def extract_pages_parallel(cls, pdf_path, zoom=4, min_overlap=50, max_overlap=200):
+    async def extract_pages_parallel(
+        cls, pdf_path, zoom=4, min_overlap=50, max_overlap=200
+    ):
         """
         Processes and extracts images from a PDF file asynchronously, handles overlaps, and returns base64-encoded images.
 
@@ -158,13 +186,17 @@ class ImageGrabber:
         base64_encoded_images = []
 
         # Detect language on first page
-        first_img = await asyncio.to_thread(cls.page_to_image, pdf_file.load_page(0), zoom)
+        first_img = await asyncio.to_thread(
+            cls.page_to_image, pdf_file.load_page(0), zoom
+        )
         lang = await asyncio.to_thread(cls.detect_language, first_img) or "eng"
 
         # Create tasks for rendering all pages
         tasks = []
         for i in range(total_pages):
-            task = asyncio.create_task(asyncio.to_thread(cls.page_to_image, pdf_file.load_page(i), zoom))
+            task = asyncio.create_task(
+                asyncio.to_thread(cls.page_to_image, pdf_file.load_page(i), zoom)
+            )
             tasks.append((i, task))
 
         # Wait for tasks to complete
@@ -178,14 +210,26 @@ class ImageGrabber:
 
             if idx > 0:
                 prev_img = images[idx - 1]
-                curr_img = await asyncio.to_thread(cls.adaptive_overlap_trim, prev_img, curr_img, lang, min_overlap, max_overlap)
+                curr_img = await asyncio.to_thread(
+                    cls.adaptive_overlap_trim,
+                    prev_img,
+                    curr_img,
+                    lang,
+                    min_overlap,
+                    max_overlap,
+                )
 
-            filename = os.path.join(tempfile.gettempdir(), f"{Toolkit.generate_concatenated_random_strings(length1=5, length2=5)}.png")
+            filename = os.path.join(
+                tempfile.gettempdir(),
+                f"{Toolkit.generate_concatenated_random_strings(length1=5, length2=5)}.png",
+            )
             await asyncio.to_thread(curr_img.save, filename, optimize=True)
             logger.info(f"[✅] Saved {filename}")
 
             images[idx] = curr_img
-            base64_encoded_images.append(await asyncio.to_thread(Toolkit.image_to_base64_and_delete, filename))
+            base64_encoded_images.append(
+                await asyncio.to_thread(Toolkit.image_to_base64_and_delete, filename)
+            )
             if os.path.exists(filename):
                 os.remove(filename)
             if idx % 10 == 0:
@@ -205,4 +249,8 @@ if __name__ == "__main__":
     parser.add_argument("--similarity_threshold", type=float, default=0.95)
     args = parser.parse_args()
 
-    asyncio.run(ImageGrabber.extract_pages_parallel(args.pdf_path, args.zoom, args.min_overlap, args.max_overlap))
+    asyncio.run(
+        ImageGrabber.extract_pages_parallel(
+            args.pdf_path, args.zoom, args.min_overlap, args.max_overlap
+        )
+    )

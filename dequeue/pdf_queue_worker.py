@@ -36,7 +36,9 @@ async def ensure_group(redis_client):
             raise
 
 
-async def process_message(stream_message_id: str, data: str, group_name:str , consumer_name:str):
+async def process_message(
+    stream_message_id: str, data: str, group_name: str, consumer_name: str
+):
 
     logger.info(f"Processing message {stream_message_id} -> {data}")
 
@@ -52,10 +54,9 @@ async def process_message(stream_message_id: str, data: str, group_name:str , co
             data.get("message").get("user_id"),
             {
                 "stream_message_id": stream_message_id,
-                "group_name" : group_name, 
-                "stream_name" :STREAM_NAME
-            }
- 
+                "group_name": group_name,
+                "stream_name": STREAM_NAME,
+            },
         )
 
     # Log completion of message processing
@@ -81,7 +82,9 @@ async def consume_new_messages(redis_client, consumer_name):
                         data = {k: json.loads(v) for k, v in message.items()}
                         logger.info(f"Response: {data}")
 
-                        await process_message(message_id, data, GROUP_NAME ,consumer_name )
+                        await process_message(
+                            message_id, data, GROUP_NAME, consumer_name
+                        )
                         # await redis_client.xack(STREAM_NAME, GROUP_NAME, message_id)
 
                     except json.JSONDecodeError as e:
