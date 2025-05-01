@@ -50,23 +50,16 @@ async def upload_pdf(
             extracted_dir = os.path.join(temp_dir, file.filename.split(".", 1)[0])
             os.makedirs(extracted_dir, exist_ok=True)
 
-
-            contents: bytes = await file.read()
-            def unzip():
-                with zipfile.ZipFile(io.BytesIO(contents)) as zip_file:
-                    zip_file.extractall(extracted_dir)
-            await asyncio.to_thread(unzip)
-
-
-
-
-
-
+            # contents: bytes = await file.read()
+            # def unzip():
+            #     with zipfile.ZipFile(io.BytesIO(contents)) as zip_file:
+            #         zip_file.extractall(extracted_dir)
+            # await asyncio.to_thread(unzip)
 
             # Process zip file
-            # contents: bytes = await file.read()
-            # with zipfile.ZipFile(io.BytesIO(contents)) as zip_file:
-            #     zip_file.extractall(extracted_dir)
+            contents: bytes = await file.read()
+            with zipfile.ZipFile(io.BytesIO(contents)) as zip_file:
+                zip_file.extractall(extracted_dir)
 
             processed_files.append(extracted_dir)
 
@@ -101,7 +94,7 @@ async def upload_pdf(
             "company_id": details.get("company_id", await generate_obj_id()),
         }
 
-        print(processed_files)
+        # print(processed_files)
 
         await enqueue(queue_data)
 
@@ -123,7 +116,6 @@ async def upload_pdf(
                 "message": f"Something went wrong! {e}",
                 "batch_id": data.get("batch_id"),
             },
-
         )
 
 

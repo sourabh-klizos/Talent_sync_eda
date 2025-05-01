@@ -6,6 +6,8 @@ import uuid
 
 error_count, success_count = 0 , 0
 
+_success_lock = asyncio.Lock()
+_error_lock = asyncio.Lock()
 
 
 async def upload_zip():
@@ -34,6 +36,7 @@ async def upload_zip():
         if response.status_code and response.status_code == 200:
             global success_count
             success_count += 1
+
             # print(f"Status code: {response.status_code}")
             # print("Response body:", response.text)
         else:
@@ -64,18 +67,18 @@ async def upload_multiple_with_bg_task(n: int):
     for i in range(n):
         print(f"Starting task {i}")
         # await asyncio.sleep(0.2)
-        # asyncio.create_task(upload_zip())
+        asyncio.create_task(upload_zip())
 
 
-        tasks.append(
-            asyncio.create_task(upload_zip())
-        )
+    #     tasks.append(
+    #         asyncio.create_task(upload_zip())
+    #     )
 
-    await asyncio.gather(*tasks)
+    # await asyncio.gather(*tasks)
     # print("done- > ")
 
 
-    await asyncio.sleep(10)
+    await asyncio.sleep(180)
 
 
 
@@ -85,7 +88,7 @@ if __name__ == "__main__":
     # asyncio.run(upload_zip())
     # asyncio.run(upload_multiple(30))
 
-    asyncio.run(upload_multiple_with_bg_task(40))
+    asyncio.run(upload_multiple_with_bg_task(100))
 
     print(f"error_count: -> {error_count}")
 
