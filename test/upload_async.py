@@ -13,7 +13,8 @@ async def upload_zip():
     }
 
     # zip_path = r"C:\Users\Sourabh Kumar Das\Downloads\sample-local-pdf (2).zip"
-    zip_path = "C:\\Users\\Sourabh Kumar Das\\Downloads\\sample-local-pdf (2).zip"
+    # zip_path = "C:\\Users\\Sourabh Kumar Das\\Downloads\\sample-local-pdf (2).zip"
+    zip_path = r"C:\Users\Sourabh Kumar Das\Downloads\sample-report_new.zip"
 
     # Prepare the file to send as multipart
     with open(zip_path, "rb") as f:
@@ -40,13 +41,19 @@ async def upload_multiple_with_bg_task(n: int):
 
     for i in range(n):
         print(f"Starting task {i}")
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(1)
         asyncio.create_task(upload_zip())
-        # task = asyncio.create_task(upload_zip())
-        # tasks.append(task)
 
-    # Wait for all background uploads to finish
+
+    #     tasks.append(
+    #         asyncio.create_task(upload_zip())
+    #     )
+
     # await asyncio.gather(*tasks)
+    # print("done- > ")
+
+
+
 
     await asyncio.sleep(10)
 
@@ -54,4 +61,5 @@ async def upload_multiple_with_bg_task(n: int):
 if __name__ == "__main__":
     # asyncio.run(upload_zip())
     # asyncio.run(upload_multiple(30))
-    asyncio.run(upload_multiple_with_bg_task(20))
+
+    asyncio.run(upload_multiple_with_bg_task(40))
