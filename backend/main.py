@@ -6,6 +6,7 @@ import io
 import zipfile
 import json
 from redis_conf import get_redis_client
+import asyncio
 
 # from backend.redis_conf import get_redis_client
 from settings import logger
@@ -49,10 +50,23 @@ async def upload_pdf(
             extracted_dir = os.path.join(temp_dir, file.filename.split(".", 1)[0])
             os.makedirs(extracted_dir, exist_ok=True)
 
-            # Process zip file
+
             contents: bytes = await file.read()
-            with zipfile.ZipFile(io.BytesIO(contents)) as zip_file:
-                zip_file.extractall(extracted_dir)
+            def unzip():
+                with zipfile.ZipFile(io.BytesIO(contents)) as zip_file:
+                    zip_file.extractall(extracted_dir)
+            await asyncio.to_thread(unzip)
+
+
+
+
+
+
+
+            # Process zip file
+            # contents: bytes = await file.read()
+            # with zipfile.ZipFile(io.BytesIO(contents)) as zip_file:
+            #     zip_file.extractall(extracted_dir)
 
             processed_files.append(extracted_dir)
 
@@ -99,9 +113,17 @@ async def upload_pdf(
             },
         )
     except Exception as e:
-        return HTTPException(
+        # return HTTPException(
+        #     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        #     detail=f"Something went wrong! {e}",
+        # )
+        return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Something went wrong! {e}",
+            content={
+                "message": f"Something went wrong! {e}",
+                "batch_id": data.get("batch_id"),
+            },
+
         )
 
 

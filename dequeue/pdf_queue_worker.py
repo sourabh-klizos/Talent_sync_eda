@@ -37,7 +37,7 @@ async def ensure_group(redis_client):
 
 
 async def process_message(
-    stream_message_id: str, data: str, group_name: str, consumer_name: str
+    stream_message_id: str, data: str, group_name: str
 ):
 
     logger.info(f"Processing message {stream_message_id} -> {data}")
@@ -83,7 +83,7 @@ async def consume_new_messages(redis_client, consumer_name):
                         logger.info(f"Response: {data}")
 
                         await process_message(
-                            message_id, data, GROUP_NAME, consumer_name
+                            message_id, data, GROUP_NAME
                         )
                         # await redis_client.xack(STREAM_NAME, GROUP_NAME, message_id)
 
@@ -125,7 +125,10 @@ async def reclaim_stuck_messages(redis_client):
                     logger.error(f"Error decoding JSON for message {message_id}")
                     continue
 
-                await process_message(message_id, data)
+                # await process_message(message_id, data)
+
+                await process_message(message_id, data, GROUP_NAME)
+
                 await redis_client.xack(STREAM_NAME, GROUP_NAME, message_id)
 
         except Exception as e:
