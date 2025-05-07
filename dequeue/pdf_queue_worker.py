@@ -48,10 +48,10 @@ async def process_message(
         # Process the extracted files asynchronously
         await process_zip_extracted_files(
             extracted_dir,
-            data.get("message").get("batch_id"),
-            data.get("message").get("job_id"),
-            data.get("message").get("company_id"),
-            data.get("message").get("user_id"),
+            data.get("message", {}).get("batch_id"),
+            data.get("message", {}).get("job_id"),
+            data.get("message", {}).get("company_id"),
+            data.get("message", {}).get("user_id"),
             {
                 "stream_message_id": stream_message_id,
                 "group_name": group_name,

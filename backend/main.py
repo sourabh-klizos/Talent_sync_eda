@@ -7,6 +7,7 @@ import zipfile
 import json
 from redis_conf import get_redis_client
 import asyncio
+from concurrent.futures import ProcessPoolExecutor
 
 # from backend.redis_conf import get_redis_client
 from settings import logger
@@ -72,7 +73,7 @@ async def upload_pdf(
         data = {
             "job_id": job_id,
             "batch_name": batch_name,
-            "extracted_dir": processed_files,
+            # "extracted_dir": processed_files,
             "upload_count": file_count,
             "company_id": "123_company",
             "batch_id": await generate_random_id(),

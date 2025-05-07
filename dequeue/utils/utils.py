@@ -28,6 +28,59 @@ async def delete_from_stream(stream_details: dict) -> None:
     logger.info(f"Deleted message {stream_message_id} from stream '{stream_name}'")
 
 
+
+
+async def search_by_batch_id(
+    stream_name: str, target_batch_id: uuid.UUID
+) -> str | None:
+    try:
+
+        redis_client = await get_redis_client()
+        entries = redis_client.xrange(stream_name)
+
+        for stream_id, data in entries:
+            if data and data.get("batch_id") == target_batch_id:
+                logger.info(
+                    f"Found matching batch_id '{target_batch_id}' in stream '{stream_name}' at entry '{stream_id}'."
+                )
+                return stream_id
+
+        return None
+
+    except Exception as e:
+        logger.exception(
+            f"Error while searching for batch_id '{target_batch_id}' in stream '{stream_name}': {e}"
+        )
+        return None
+    
+
+async def delete_task_from_queue(stream_name: str  , stream_id: str) -> bool:
+    try:
+
+        redis_client = await get_redis_client()
+        deleted_count = redis_client.xdel(stream_name, StopIteration)
+        if deleted_count == 1:
+            return True
+        return False
+    except Exception as e:
+        pass
+
+
+
+    
+async def delete_queued_task( stream_name: str, target_batch_id: uuid.UUID):
+    redis_client = await get_redis_client()
+    ...
+
+
+
+
+
+
+
+
+
+
 async def process_zip_extracted_files(
     extracted_dir: str,
     batch_id: uuid.UUID,
@@ -35,7 +88,7 @@ async def process_zip_extracted_files(
     user_id: str,
     company_id: str,
     stream_details: dict,
-):
+) -> None:
     """Process all PDF files in the extracted directory using worker pool"""
     logger.info(f"Starting to process files from extracted directory: {extracted_dir}")
     try:
