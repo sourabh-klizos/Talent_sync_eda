@@ -15,6 +15,9 @@ from backend.settings import logger
 from utils.utils import process_zip_extracted_files
 
 
+
+
+
 REDIS_URI = "redis://localhost"
 STREAM_NAME = "process_pdfs"
 GROUP_NAME = "tread_group"
@@ -39,7 +42,8 @@ async def ensure_group(redis_client):
 async def process_message(
     stream_message_id: str, data: str, group_name: str
 ):
-
+    asyncio.sleep(100)
+    # print(data)
     logger.info(f"Processing message {stream_message_id} -> {data}")
 
     for extracted_dir in data.get("message").get("extracted_dir"):
@@ -47,12 +51,12 @@ async def process_message(
 
         # Process the extracted files asynchronously
         await process_zip_extracted_files(
-            extracted_dir,
-            data.get("message", {}).get("batch_id"),
-            data.get("message", {}).get("job_id"),
-            data.get("message", {}).get("company_id"),
-            data.get("message", {}).get("user_id"),
-            {
+            extracted_dir=extracted_dir,
+            batch_id=data.get("message", {}).get("batch_id"),
+            job_id=data.get("message", {}).get("job_id"),
+            company_id = data.get("message", {}).get("company_id"),
+            user_id = data.get("message", {}).get("user_id"),
+            stream_details = {
                 "stream_message_id": stream_message_id,
                 "group_name": group_name,
                 "stream_name": STREAM_NAME,
@@ -85,6 +89,7 @@ async def consume_new_messages(redis_client, consumer_name):
                         await process_message(
                             message_id, data, GROUP_NAME
                         )
+
                         # await redis_client.xack(STREAM_NAME, GROUP_NAME, message_id)
 
                     except json.JSONDecodeError as e:

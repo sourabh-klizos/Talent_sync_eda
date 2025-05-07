@@ -14,6 +14,10 @@ from settings import logger
 from uuid import uuid4
 from utils.utc_time import get_current_time_utc
 from bson import ObjectId
+from utils.cancle_task import delete_queued_task
+from utils.cancle_task import check_task_already_completed
+
+
 
 from db import batches, candidates, jobs
 
@@ -138,3 +142,45 @@ async def enqueue(queue_data: dict):
         # {"message": json.dumps(queue_data).encode()}
         {"message": json.dumps(queue_data).encode()},
     )
+
+
+
+
+
+
+
+
+@app.post("/cancle_task")
+async def cancle_task(batch_id: str = Form(...)):
+    STREAM_NAME = "process_pdfs"
+
+    try:
+
+        already_completed = await check_task_already_completed(batch_id=batch_id)
+        if already_completed:
+            return JSONResponse(
+                content={"error": f"Task with batch_id {batch_id} compeleted."},
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+
+        deleted = await delete_queued_task(stream_name=STREAM_NAME, target_batch_id=batch_id)
+
+        
+        
+        if deleted:
+            return JSONResponse(
+                content={"message": f"Task with batch_id {batch_id} successfully canceled and deleted."},
+                status_code=status.HTTP_200_OK
+            )
+        # elif
+        else:
+            return JSONResponse(
+                content={"error": f"Task with batch_id {batch_id} could not be found or compeleted."},
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+    
+    except Exception as e:
+        return JSONResponse(
+            content={"error": "Something went wrong while trying to cancel the task. Please try again later.", "details": str(e)},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

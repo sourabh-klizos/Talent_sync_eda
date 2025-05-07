@@ -15,7 +15,7 @@ import os, sys
 from backend.redis_conf import get_redis_client
 
 
-from backend.db import extracted_texts
+from backend.db import extracted_texts , batches
 
 
 async def delete_from_stream(stream_details: dict) -> None:
@@ -28,56 +28,95 @@ async def delete_from_stream(stream_details: dict) -> None:
     logger.info(f"Deleted message {stream_message_id} from stream '{stream_name}'")
 
 
+# async def search_by_batch_id(
+#     stream_name: str, target_batch_id: uuid.UUID
+# ) -> str | None:
+#     try:
+
+#         redis_client = await get_redis_client()
+#         entries = redis_client.xrange(stream_name)
+
+#         for stream_id, data in entries:
+#             if data and data.get("batch_id") == target_batch_id:
+#                 logger.info(
+#                     f"Found matching batch_id '{target_batch_id}' in stream '{stream_name}' at entry '{stream_id}'."
+#                 )
+#                 return stream_id
+
+#         return None
+
+#     except Exception as e:
+#         logger.exception(
+#             f"Error while searching for batch_id '{target_batch_id}' in stream '{stream_name}': {e}"
+#         )
+#         return None
 
 
-async def search_by_batch_id(
-    stream_name: str, target_batch_id: uuid.UUID
-) -> str | None:
-    try:
+# async def delete_task_from_queue(
+#     stream_name: str, stream_id: str, target_batch_id: str
+# ) -> bool:
+#     try:
 
-        redis_client = await get_redis_client()
-        entries = redis_client.xrange(stream_name)
+#         redis_client = await get_redis_client()
+#         deleted_count = redis_client.xdel(stream_name, StopIteration)
+#         if deleted_count == 1:
+#             logger.info(
+#                 f"successfully deleted queued task {stream_id} from stream {stream_name} batch_id {target_batch_id}"
+#             )
+#             return True
+#         return False
+#     except Exception as e:
+#         logger.exception(
+#             f"Error while deleting for batch_id '{target_batch_id}' in stream '{stream_name}' stream_id {stream_id} : {e}"
+#         )
+#         return False
 
-        for stream_id, data in entries:
-            if data and data.get("batch_id") == target_batch_id:
-                logger.info(
-                    f"Found matching batch_id '{target_batch_id}' in stream '{stream_name}' at entry '{stream_id}'."
-                )
-                return stream_id
 
-        return None
+# async def delete_queued_task(stream_name: str, target_batch_id: uuid.UUID) -> bool:
+#     # redis_client = await get_redis_client()
+#     stream_id = await search_by_batch_id(
+#         stream_name=stream_name, target_batch_id=target_batch_id
+#     )
 
-    except Exception as e:
-        logger.exception(
-            f"Error while searching for batch_id '{target_batch_id}' in stream '{stream_name}': {e}"
-        )
-        return None
+#     if not stream_id:
+#         return 
+    
+#     is_completed = await check_task_already_completed(batch_id=target_batch_id)
+
+#     if not is_completed:
+#         is_deleted = await delete_task_from_queue(stream_id= stream_id,stream_name=stream_name,  target_batch_id=target_batch_id)
+#         if  is_deleted:
+#             return True
+        
+#     return False  # already completed
+
+
     
 
-async def delete_task_from_queue(stream_name: str  , stream_id: str) -> bool:
-    try:
 
-        redis_client = await get_redis_client()
-        deleted_count = redis_client.xdel(stream_name, StopIteration)
-        if deleted_count == 1:
-            return True
-        return False
-    except Exception as e:
-        pass
+# from motor.motor_asyncio import AsyncIoMotorCollection
+
+# async def check_task_already_completed(batch_id: str) -> bool:
+
+#     upload_count = await batches.find_one({"batch_id":batch_id},{"upload_count" :1})
+#     logger.info(f"Found {upload_count} uploads for batch_id {batch_id} ")
+
+#     if upload_count:
+#         curr = extracted_texts.find({"batch_id": batch_id})
+#         extracted_texts_list = await curr.to_list(length=None)
+#         length = len(extracted_texts_list)
+
+#         if length == upload_count:
+#             return True
+        
+#     return False
+
+
+        
 
 
 
     
-async def delete_queued_task( stream_name: str, target_batch_id: uuid.UUID):
-    redis_client = await get_redis_client()
-    ...
-
-
-
-
-
-
-
 
 
 
@@ -165,7 +204,7 @@ async def _process_file_chunks(
     # Process PDFs concurrently
     tasks = [
         _process_files(
-            os.path.join(extracted_dir, file), job_data.get("job_id"), user_id
+            os.path.join(extracted_dir, file), job_data.get("job_id"), user_id, batch_id
         )
         for file in chunks
     ]
@@ -273,7 +312,7 @@ class TextExtractionFailedException(Exception):
     pass
 
 
-async def _process_files(file_path: str, job_name: str, user_id: str):
+async def _process_files(file_path: str, job_name: str, user_id: str, batch_id: str):
     """Process a single PDF file and return parsed CV data"""
     logger.info(f"Starting to process PDF file: {file_path}")
 
@@ -288,6 +327,7 @@ async def _process_files(file_path: str, job_name: str, user_id: str):
                 {
                     "job_name": job_name,
                     "user_id": user_id,
+                    "batch_id": batch_id,
                     "parse_text": text if text else "",
                 }
             )
