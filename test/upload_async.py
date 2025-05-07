@@ -87,7 +87,7 @@ if __name__ == "__main__":
     # asyncio.run(upload_zip())
     # asyncio.run(upload_multiple(30))
 
-    asyncio.run(upload_multiple_with_bg_task(10))
+    asyncio.run(upload_multiple_with_bg_task(20))
 
     print(f"error_count: -> {error_count}")
 

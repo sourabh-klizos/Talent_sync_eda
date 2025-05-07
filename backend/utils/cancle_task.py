@@ -86,7 +86,7 @@ async def delete_queued_task(stream_name: str, target_batch_id: uuid.UUID) -> bo
     print(f"stream_id {stream_id}")
 
     if not stream_id:
-        return
+        return None
 
     # is_completed = await check_task_already_completed(batch_id=target_batch_id)
 

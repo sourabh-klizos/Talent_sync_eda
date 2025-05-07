@@ -156,9 +156,22 @@ async def cancle_task(batch_id: str = Form(...)):
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
 
+
+
         deleted = await delete_queued_task(
             stream_name=STREAM_NAME, target_batch_id=batch_id
         )
+
+        print(f"deleted {deleted} already_completed {already_completed}")
+
+        if not already_completed and not deleted:
+            return JSONResponse(
+                content={
+                    "error": f"Task with batch_id {batch_id} already deleted."
+                },
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
 
         if deleted:
             return JSONResponse(
