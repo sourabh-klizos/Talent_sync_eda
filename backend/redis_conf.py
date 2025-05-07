@@ -19,14 +19,6 @@
 #     return _redis_client
 
 
-
-
-
-
-
-
-
-
 import redis.asyncio as redis
 
 _redis_client = None

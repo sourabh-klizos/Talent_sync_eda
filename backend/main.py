@@ -18,7 +18,6 @@ from utils.cancle_task import delete_queued_task
 from utils.cancle_task import check_task_already_completed
 
 
-
 from db import batches, candidates, jobs
 
 app = FastAPI()
@@ -144,12 +143,6 @@ async def enqueue(queue_data: dict):
     )
 
 
-
-
-
-
-
-
 @app.post("/cancle_task")
 async def cancle_task(batch_id: str = Form(...)):
     STREAM_NAME = "process_pdfs"
@@ -160,27 +153,34 @@ async def cancle_task(batch_id: str = Form(...)):
         if already_completed:
             return JSONResponse(
                 content={"error": f"Task with batch_id {batch_id} compeleted."},
-                status_code=status.HTTP_400_BAD_REQUEST
+                status_code=status.HTTP_400_BAD_REQUEST,
             )
 
-        deleted = await delete_queued_task(stream_name=STREAM_NAME, target_batch_id=batch_id)
+        deleted = await delete_queued_task(
+            stream_name=STREAM_NAME, target_batch_id=batch_id
+        )
 
-        
-        
         if deleted:
             return JSONResponse(
-                content={"message": f"Task with batch_id {batch_id} successfully canceled and deleted."},
-                status_code=status.HTTP_200_OK
+                content={
+                    "message": f"Task with batch_id {batch_id} successfully canceled and deleted."
+                },
+                status_code=status.HTTP_200_OK,
             )
         # elif
         else:
             return JSONResponse(
-                content={"error": f"Task with batch_id {batch_id} could not be found or compeleted."},
-                status_code=status.HTTP_400_BAD_REQUEST
+                content={
+                    "error": f"Task with batch_id {batch_id} could not be found or compeleted."
+                },
+                status_code=status.HTTP_400_BAD_REQUEST,
             )
-    
+
     except Exception as e:
         return JSONResponse(
-            content={"error": "Something went wrong while trying to cancel the task. Please try again later.", "details": str(e)},
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            content={
+                "error": "Something went wrong while trying to cancel the task. Please try again later.",
+                "details": str(e),
+            },
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )

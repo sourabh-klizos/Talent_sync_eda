@@ -15,7 +15,7 @@ import os, sys
 from backend.redis_conf import get_redis_client
 
 
-from backend.db import extracted_texts , batches
+from backend.db import extracted_texts, batches
 
 
 async def delete_from_stream(stream_details: dict) -> None:
@@ -79,19 +79,16 @@ async def delete_from_stream(stream_details: dict) -> None:
 #     )
 
 #     if not stream_id:
-#         return 
-    
+#         return
+
 #     is_completed = await check_task_already_completed(batch_id=target_batch_id)
 
 #     if not is_completed:
 #         is_deleted = await delete_task_from_queue(stream_id= stream_id,stream_name=stream_name,  target_batch_id=target_batch_id)
 #         if  is_deleted:
 #             return True
-        
+
 #     return False  # already completed
-
-
-    
 
 
 # from motor.motor_asyncio import AsyncIoMotorCollection
@@ -108,16 +105,8 @@ async def delete_from_stream(stream_details: dict) -> None:
 
 #         if length == upload_count:
 #             return True
-        
+
 #     return False
-
-
-        
-
-
-
-    
-
 
 
 async def process_zip_extracted_files(

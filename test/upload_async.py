@@ -3,8 +3,7 @@ import httpx
 import uuid
 
 
-
-error_count, success_count = 0 , 0
+error_count, success_count = 0, 0
 
 _success_lock = asyncio.Lock()
 _error_lock = asyncio.Lock()
@@ -32,7 +31,6 @@ async def upload_zip():
             async with httpx.AsyncClient() as client:
                 response = await client.post(url, data=form_data, files=files)
 
-
         if response.status_code and response.status_code == 200:
             # with _success_lock:
             global success_count
@@ -44,8 +42,8 @@ async def upload_zip():
             # with _error_lock:
             global error_count
             error_count += 1
-                # print("Error Response :", response.text)
-                # print(f"Status code: {response.status_code}")
+            # print("Error Response :", response.text)
+            # print(f"Status code: {response.status_code}")
 
         return response
 
@@ -53,7 +51,6 @@ async def upload_zip():
         pass
         # print("Error Response :", response.text)
         # print(f"Status code: {response.status_code}")
-
 
 
 async def upload_multiple(n: int):
@@ -73,10 +70,7 @@ async def upload_multiple_with_bg_task(n: int):
         # await asyncio.sleep(0.2)
         # asyncio.create_task(upload_zip())
 
-
-        tasks.append(
-            asyncio.create_task(upload_zip())
-        )
+        tasks.append(asyncio.create_task(upload_zip()))
 
     results = await asyncio.gather(*tasks)
     # print("done- > ")
@@ -86,11 +80,7 @@ async def upload_multiple_with_bg_task(n: int):
             print(f"Status code: {result.status_code}")
             print("Res body:", result.text)
 
-
     # await asyncio.sleep(100)
-
-
-
 
 
 if __name__ == "__main__":
@@ -102,4 +92,3 @@ if __name__ == "__main__":
     print(f"error_count: -> {error_count}")
 
     print(f"success_count: -> {success_count}")
-
