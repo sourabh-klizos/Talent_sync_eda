@@ -5,20 +5,26 @@ import os
 import io
 import zipfile
 import json
-from redis_conf import get_redis_client
 import asyncio
+# from redis_conf import get_redis_client
+from backend.redis_conf import get_redis_client
 from concurrent.futures import ProcessPoolExecutor
 
 # from backend.redis_conf import get_redis_client
-from settings import logger
 from uuid import uuid4
-from utils.utc_time import get_current_time_utc
+# from settings import logger
+from backend.settings import logger
+# from utils.utc_time import get_current_time_utc
+from backend.utils.utc_time import get_current_time_utc
 from bson import ObjectId
-from utils.cancle_task import delete_queued_task
-from utils.cancle_task import check_task_already_completed
+from backend.utils.cancle_task import delete_queued_task
+# from utils.cancle_task import delete_queued_task
+from backend.utils.cancle_task import check_task_already_completed
+# from utils.cancle_task import check_task_already_completed
 
 
-from db import batches, candidates, jobs
+# from db import batches, candidates, jobs
+from backend.db import batches, candidates, jobs
 
 app = FastAPI()
 

@@ -1,8 +1,10 @@
-# from backend.redis_conf import get_redis_client
-from redis_conf import get_redis_client
-from settings import logger
+from backend.redis_conf import get_redis_client
+# from redis_conf import get_redis_client
+# from settings import logger
+from backend.settings import logger
 import uuid
-from db import extracted_texts, batches
+# from db import extracted_texts, batches
+from backend.db import extracted_texts, batches
 import json
 import os, shutil
 from typing import List

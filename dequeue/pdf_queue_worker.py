@@ -6,7 +6,8 @@ from typing import Dict
 import sys, os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from backend.redis_conf import get_redis_client
+# from backend.redis_conf import get_redis_client
+from redis_conf import get_redis_client
 from backend.settings import logger
 
 # from ..backend.redis_conf import get_redis_client

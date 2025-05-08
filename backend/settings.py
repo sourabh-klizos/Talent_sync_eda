@@ -1,6 +1,9 @@
 import logging
 import os
 from logging.handlers import TimedRotatingFileHandler
+from pydantic import  Field
+from pydantic_settings import BaseSettings
+from pathlib import Path
 
 
 
@@ -32,3 +35,19 @@ logger = logging.getLogger("app")
 
 
 
+
+
+
+
+
+class Settings(BaseSettings):
+    redis_url: str = Field(..., env="REDIS_URL")
+    openai_api_key: str = Field(..., env="OPENAI_API_KEY")
+
+    class Config:
+        # env_file = ".env"  # Or use an absolute path if needed
+        env_file = Path(__file__).resolve().parent / "../.env" 
+
+settings = Settings()
+
+print(settings.openai_api_key, settings.redis_url)

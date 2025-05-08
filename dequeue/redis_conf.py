@@ -20,12 +20,12 @@
 
 
 import redis.asyncio as redis
-from backend.settings import settings
+# from settings import settings
 _redis_client = None
 
 
-# REDIS_URI = "redis://localhost:6379/0"
-REDIS_URI = settings.redis_url
+REDIS_URI = "redis://localhost:6379/0"
+# REDIS_URI = settings.redis_url
 
 
 async def get_redis_client(max_connections: int = 100) -> redis.Redis:
