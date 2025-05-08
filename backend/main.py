@@ -160,7 +160,7 @@ async def cancle_task(batch_id: str = Form(...)):
             stream_name=STREAM_NAME, target_batch_id=batch_id
         )
 
-        print(f"deleted {deleted} already_completed {already_completed}")
+        # print(f"deleted {deleted} already_completed {already_completed}")
 
         if not already_completed and not deleted:
             return JSONResponse(
