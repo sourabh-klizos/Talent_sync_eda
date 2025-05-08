@@ -23,8 +23,13 @@ import redis.asyncio as redis
 # from settings import settings
 _redis_client = None
 
+from dotenv import load_dotenv
+import os
 
-REDIS_URI = "redis://localhost:6379/0"
+load_dotenv()
+
+REDIS_URI = os.getenv("REDIS_URL")
+# REDIS_URI = "redis://localhost:6379/0"
 # REDIS_URI = settings.redis_url
 
 

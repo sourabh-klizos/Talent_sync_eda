@@ -1,9 +1,17 @@
 import motor.motor_asyncio
 from motor.motor_asyncio import AsyncIOMotorCollection
+from backend.settings import settings
+
 
 # MongoDB connection setup
-MONGO_URI = "mongodb://localhost:27017/"
-DATABASE_NAME = "talentsync_"
+MONGO_URI = settings.mongo_uri
+DATABASE_NAME = settings.database_name
+
+
+# MONGO_URI = "mongodb://localhost:27017/"
+# DATABASE_NAME = "talentsync_"
+
+
 BATCHES_COLLECTION = "batches"
 CANDIDATES_COLLECTION = "candidates"
 JOB_COLLECTION = "jobs"

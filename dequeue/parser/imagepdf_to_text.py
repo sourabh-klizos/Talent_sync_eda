@@ -10,7 +10,7 @@ import pytesseract
 from backend.settings import logger
 
 # from app.misc import Toolkit
-from parser.misc import Toolkit
+from dequeue.parser.misc import Toolkit
 from langdetect import DetectorFactory, detect
 from PIL import Image
 from rapidfuzz import fuzz

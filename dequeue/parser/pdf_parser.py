@@ -3,10 +3,10 @@ import os.path
 import subprocess
 import tempfile
 from openai import APIConnectionError, APIError, APITimeoutError, RateLimitError
-from parser.docx_to_text import DocxExtractor
-from parser.imagepdf_to_text import ImageGrabber
-from parser.misc import Toolkit
-from backend.settings import logger
+from dequeue.parser.docx_to_text import DocxExtractor
+from dequeue.parser.imagepdf_to_text import ImageGrabber
+from dequeue.parser.misc import Toolkit
+# from dequeue.backend.settings import logger
 
 
 class CorruptFileException(Exception):

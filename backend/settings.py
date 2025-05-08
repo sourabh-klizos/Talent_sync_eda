@@ -43,6 +43,11 @@ logger = logging.getLogger("app")
 class Settings(BaseSettings):
     redis_url: str = Field(..., env="REDIS_URL")
     openai_api_key: str = Field(..., env="OPENAI_API_KEY")
+    mongo_uri: str = Field(..., env="MONGO_URI")
+    # mongo_uri: str = Field(default="mongodb://localhost:27017/", env="MONGO_URI")
+    database_name: str = Field(..., env="DATABASE_NAME")
+    # database_name: str = Field(default="talentsync_", env="DATABASE_NAME")
+    
 
     class Config:
         # env_file = ".env"  # Or use an absolute path if needed

@@ -1,22 +1,27 @@
 import asyncio
 # import redis.asyncio as redis
 import json
-import logging
+# import logging
 from typing import Dict
 import sys, os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 # from backend.redis_conf import get_redis_client
-from redis_conf import get_redis_client
-from backend.settings import logger
+
+
+from dequeue.redis_conf import get_redis_client
+# from backend.settings import logger
+import logging
+logger = logging.basicConfig(level=logging.INFO)
+
 
 # from ..backend.redis_conf import get_redis_client
 
 
-from utils.utils import process_zip_extracted_files
+from dequeue.utils.utils import process_zip_extracted_files
 
 
-REDIS_URI = "redis://localhost"
+# REDIS_URI = "redis://localhost"
 STREAM_NAME = "process_pdfs"
 GROUP_NAME = "tread_group"
 MIN_IDLE_TIME_MS = 60 * 1_000 * 3  # Reclaim jobs stuck for 180 seconds

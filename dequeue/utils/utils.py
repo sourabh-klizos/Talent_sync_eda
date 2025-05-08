@@ -4,9 +4,9 @@ import os
 import shutil
 from typing import List
 import uuid
-from utils.utc_time import get_current_time_utc
+from dequeue.utils.utc_time import get_current_time_utc
 from bson import Binary, ObjectId
-from parser.pdf_parser import extract, EmptyFileException
+from dequeue.parser.pdf_parser import extract, EmptyFileException
 
 import os, sys
 
