@@ -1,3 +1,4 @@
 backend/zip_dir/
 *.pyc
 __pycache__/
+logs/
