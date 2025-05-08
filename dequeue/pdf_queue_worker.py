@@ -11,9 +11,10 @@ import sys, os
 
 from dequeue.redis_conf import get_redis_client
 # from backend.settings import logger
-import logging
-logger = logging.basicConfig(level=logging.INFO)
+# import logging
+# logger = logging.basicConfig(level=logging.INFO)
 
+from dequeue.logger_conf import logger
 
 # from ..backend.redis_conf import get_redis_client
 

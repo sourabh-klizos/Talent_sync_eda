@@ -1,5 +1,6 @@
 import asyncio
-import os.path
+import os.path, os, sys
+
 import subprocess
 import tempfile
 from openai import APIConnectionError, APIError, APITimeoutError, RateLimitError
@@ -8,6 +9,7 @@ from dequeue.parser.imagepdf_to_text import ImageGrabber
 from dequeue.parser.misc import Toolkit
 # from dequeue.backend.settings import logger
 
+from dequeue.logger_conf import logger
 
 class CorruptFileException(Exception):
     """Raised when a file is found to be corrupt."""
@@ -45,12 +47,39 @@ class PdfToImageException(Exception):
     pass
 
 
+
+
+
+
+
+
+
+
+def pdftotext_exe_path() -> str:
+    # Define executable paths for different platforms
+    default_paths = {
+        "linux": "/usr/bin/pdftotext",
+        "win32": r"C:\Program Files\xpdf-tools\bin64\pdftotext.exe",
+    }
+
+    # Get the executable path based on the system platform
+    exe = default_paths.get(sys.platform, "")
+
+    # Check if the file exists at the default path
+    if not os.path.isfile(exe):
+        raise FileNotFoundError("pdftotext executable/binary not found at the default path. Please install it or configure the correct path.")
+
+    return exe
+
+
+
+
 class _ExtractTextFromFile:
     """Handles extraction of text from PDF files"""
 
     def __init__(self):
-        # self.pdftotext_path = pdftotext_exe_path()
-        self.pdftotext_path = r"C:\Program Files\xpdf-tools\bin64\pdftotext.exe"
+        self.pdftotext_path = pdftotext_exe_path()
+        # self.pdftotext_path = r"C:\Program Files\xpdf-tools\bin64\pdftotext.exe"
 
     async def _convert_pdf_to_text(
         self, pdf_file_path: str, output_text_file_name: str
