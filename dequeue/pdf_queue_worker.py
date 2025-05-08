@@ -1,5 +1,5 @@
 import asyncio
-import redis.asyncio as redis
+# import redis.asyncio as redis
 import json
 import logging
 from typing import Dict

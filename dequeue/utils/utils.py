@@ -318,6 +318,7 @@ async def _process_files(file_path: str, job_name: str, user_id: str, batch_id: 
                     "user_id": user_id,
                     "batch_id": batch_id,
                     "parse_text": text if text else "",
+                    "is_image_pdf":is_image_pdf
                 }
             )
 
